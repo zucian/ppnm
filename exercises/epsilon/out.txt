@@ -1,0 +1,25 @@
+exercise epsilon 
+1)
+my max int while = 2147483647
+my INT_MAX = 2147483647 
+my max int do = 2147483647
+my min int while = -2147483648
+my INT_MIN = -2147483648 
+my min int do = -2147483648
+2)
+Calculated eps double while = 2.22045e-16
+Calculated eps double for = 2.22045e-16
+Double eps = 2.22045e-16
+Calculated eps float while = 1.19209e-07
+Calculated eps float for = 1.19209e-07
+Float eps = 1.19209e-07
+Calculated eps long double while = 1
+Calculated eps long double for = 1.0842e-19
+Long Double eps = 1.0842e-19
+2)
+max = 1073741823 
+sum_up_float=15.403683
+ sum_down_float= 18.807919 
+sum_up_float=21.371631
+ sum_down_float= 21.371631 
+3)
