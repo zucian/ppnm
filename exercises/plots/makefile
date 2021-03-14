@@ -1,4 +1,4 @@
-CFLAGS = $(shell gsl-config --cflags)
+FLAGS = $(shell gsl-config --cflags)
 LDLIBS = $(shell gsl-config --libs)
 
 all: erf.gnuplot.png gam.gnuplot.png main
@@ -36,7 +36,7 @@ erf.gnuplot.png: data.txt tabulated_data.txt
 data.txt: main
 	./$< > $(@)
 
-main: main.o erf.o gamma.o
+main: main.o myErf.o myGam.o
 
 .PHONEY:clean
 clean:
