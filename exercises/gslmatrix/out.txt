@@ -1,0 +1,10 @@
+Righthand side b = 
+      6.23
+      5.27
+      2.29
+
+Check: A*x should be equal to b...:
+      6.23
+      5.27
+      2.29
+
