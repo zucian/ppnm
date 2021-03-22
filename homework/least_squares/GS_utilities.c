@@ -70,7 +70,7 @@ void backsub(gsl_matrix* R, gsl_vector* x){
 
 void GS_solve(gsl_matrix* Q, gsl_matrix* R, gsl_vector* b, gsl_vector* x){
 
-    //Solves the equation  QRx=b by applying Q^T to the vector b and then performing back_substitution on x
+    //Solves the equation  QRx=b by applying Q^T to the vector b and then performing back_substitution on x, returning answer in x
 
     gsl_blas_dgemv(CblasTrans, 1.0, Q,b,0.0,x); //Computes the matrix vector product Q^T*b and saves the result in x
     backsub(R,x); //Compute backsubstitution of R and x and returns answer in x

@@ -21,8 +21,8 @@ void GS_decomp(gsl_matrix* A, gsl_matrix* R){
     //Takes a matrix A and performs Gram-Schmidt orthogonalization. On exit A is replaced with orthogonal matrix Q and also returns upper triangular matrix R
 
     //size1 refers to amount of rows. size2 refers to columns.
-    gsl_vector* a_i = gsl_vector_alloc((A->size1)); //Allocate memory for a_i and q_i to be used later.
-    gsl_vector* q_i = gsl_vector_alloc((A->size1)); //Size should be equal to amount of rows in A
+    gsl_vector* a_i = gsl_vector_alloc(A->size1); //Allocate memory for a_i and q_i to be used later.
+    gsl_vector* q_i = gsl_vector_alloc(A->size1); //Size should be equal to amount of rows in A
 
     for (int i=0; i<(A->size2); i++){ //Loop runs over every column of A, hence size2
         gsl_matrix_get_col(a_i, A, i); //Copies the i'th column of A into a_i
