@@ -5,14 +5,65 @@
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_vector.h>
+#include <time.h>
 
-void matrix_print(gsl_matrix* A,FILE* file){
-    for(int i=0; i<(A->size1);i++){
-        for(int j=0; j<(A->size2); j++){
-            double Aij = gsl_matrix_get(A,i,j);
-            fprintf(file, "%0.3g ",Aij);
+double randomNumber( unsigned int *seed ){
+    double maxRand      =   (double)RAND_MAX;           // Maximum random number, cast to double
+    double randNum      =   (double)rand_r( seed );     // Generate pseudo-random number from seed, cast to double
+    return randNum/maxRand;
+}
+
+double diffClock(clock_t startTime, clock_t endTime){
+    /*
+    Function diffClock, takes two arguments, the time stamp
+    of the start and end of a time interval of interest.
+
+    ¤ startTime : Timestamp of beginning of time interval
+    ¤ endTime   : Timestamp of ending of time interval
+
+    */
+
+    double diffTicks  =  startTime - endTime;
+    double diffms     =  (diffTicks * 10) / CLOCKS_PER_SEC;
+
+    return diffms;
+}
+
+void set_data_tall(gsl_matrix* tallMatrix, gsl_vector* tallRHSVector, unsigned int *seed){
+    /* Method to set the data of a tall matrix using pseudorandom numbers.
+     *
+     *  ¤ gsl_matrix*    tallMatrix     : An arbitrary n x m matrix (n >= m)
+     *  ¤ gsl_vector*    tallRHSVector  : A vector of dimension n x 1
+     *  ¤ unsigned int*  seed           : A seed for the pseudorandom number generator
+     *
+     */
+
+    for(int rowId = 0; rowId < tallMatrix -> size1; rowId++){
+        for(int colId = 0; colId < tallMatrix -> size2; colId++){
+            gsl_matrix_set(tallMatrix, rowId, colId, randomNumber(seed));
         }
-        fprintf(file,"\n");
+        gsl_vector_set(tallRHSVector, rowId, randomNumber(seed));
+    }
+}
+
+void vector_print(char s[], gsl_vector* v){
+    printf("%s\n",s);
+    for(int i=0;i<v->size;i++)printf("%10g ",gsl_vector_get(v,i));
+    printf("\n");
+}
+
+void matrix_print(int numOfRows, gsl_matrix* matrixToPrint, char* string ){
+    printf("\n%s\n", string);
+    for (int rowId = 0; rowId < numOfRows; rowId++){
+        gsl_vector_view matrixToPrint_row = gsl_matrix_row (matrixToPrint, rowId);
+        gsl_vector* vector = &matrixToPrint_row.vector;
+        for(int iter = 0; iter < vector -> size; iter++){
+            if ( gsl_vector_get(vector, iter) > 1e-10 ){
+                printf("%10g\t", gsl_vector_get(vector, iter));
+            }
+            else { printf("%10g\t", 0.0); }
+        }
+        printf("\n");
     }
 }
 
@@ -50,9 +101,10 @@ void GS_decomp(gsl_matrix* A, gsl_matrix* R){
     gsl_vector_free(q_i);
 }
 
+
 void backsub(gsl_matrix* R, gsl_vector* x){
 
-    //Takes a upper triangular matrix R and performs backsubstitution. Returns solution in x.
+    //Takes a upper triangular matrix R and performs back substitution. Returns solution in x.
 
     for(int i=(x->size)-1; i>=0; i--){ //Loop runs from last column of R backwards
         double R_ii = gsl_matrix_get(R,i,i); //Stores the i'th diagonal entrance of R in R_ii
@@ -68,25 +120,52 @@ void backsub(gsl_matrix* R, gsl_vector* x){
     }
 }
 
+/*
+void backsub(gsl_matrix* upTriangMat, gsl_vector* rhsVec){
+    int numOfRows = (rhsVec -> size);
+
+    for ( int rowId = numOfRows - 1; rowId >= 0; rowId-- ){
+        double rhsVal = gsl_vector_get(rhsVec, rowId);
+
+        for( int varId = rowId + 1; varId < numOfRows; varId++ ){
+            rhsVal -= gsl_matrix_get(upTriangMat, rowId, varId) * gsl_vector_get(rhsVec, varId);
+        }
+        gsl_vector_set(rhsVec, rowId, rhsVal/gsl_matrix_get(upTriangMat, rowId, rowId));
+    }
+}
+*/
 void GS_solve(gsl_matrix* Q, gsl_matrix* R, gsl_vector* b, gsl_vector* x){
 
     //Solves the equation  QRx=b by applying Q^T to the vector b and then performing back_substitution on x
 
-    gsl_blas_dgemv(CblasTrans, 1.0, Q,b,0.0,x); //Computes the matrix vector product Q^T*b and saves the result in x
-    backsub(R,x); //Compute backsubstitution of R and x and returns answer in x
+    gsl_blas_dgemv(CblasTrans, 1., Q,b,0.,x); //Computes the matrix vector product Q^T*b and saves the result in x
+    backsub(R,x); //Compute back substitution of R and x and returns answer in x
+}
+
+void GS_inverse(gsl_matrix* Q, gsl_matrix* R, gsl_matrix* B){
+    gsl_vector* unitVector = gsl_vector_alloc(R->size1);
+    gsl_matrix* RInverse = gsl_matrix_alloc(R->size1,R->size2);
+    for(int i=0; i<(R->size2); i++){ //Loops over every column in R
+        gsl_vector_set_basis(unitVector,i);
+        backsub(R,unitVector); //Solve R*x = e_i, where e_i is the i'th standard basis vector
+        gsl_matrix_set_col(RInverse, i,unitVector); //Turns i'th column in R^-1 into solution to R*x = e_i
+    }
+    gsl_vector_free(unitVector);
+    gsl_blas_dgemm(CblasNoTrans,CblasTrans,1.,RInverse,Q,0.,B);
 }
 
 int main(){
-    FILE* GS_test = fopen("out.gstest.txt","w");
-    int n=10;
-    int m=10;
+    int n=5;
+    int m=5;
+
+    printf("Part A: \n");
 
     gsl_matrix* A = gsl_matrix_alloc(n,m);
     gsl_matrix* A_copy = gsl_matrix_alloc(n,m);
-    gsl_matrix* R = gsl_matrix_alloc(n,m);
+    gsl_matrix* R = gsl_matrix_alloc(m,m);
 
-    for(int i=0; i<(A->size2); i++){ //Creates a random matrix of size n,m
-        for(int j=0; j<(A->size1); j++){
+    for(int i=0; i<(A->size1); i++){ //Creates a random matrix of size n,m
+        for(int j=0; j<(A->size2); j++){
             double A_ij = rand()/100;
             gsl_matrix_set(A,i,j,A_ij);
         }
@@ -96,19 +175,97 @@ int main(){
 
     GS_decomp(A,R); //Performs gram-schmidt on A, stores Q in A and upper triangular in R
 
-    gsl_matrix* Q_test = gsl_matrix_alloc(n,m); //Allocates memory for Q^T*Q matrix that tests orthogonality of Q
+    gsl_matrix* Q_test = gsl_matrix_alloc(m,m); //Allocates memory for Q^T*Q matrix that tests orthogonality of Q
     gsl_blas_dgemm(CblasTrans,CblasNoTrans,1.,A,A,0.,Q_test); //Makes Q-test into Q^t*Q
 
     gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.,A,R,-1.,A_copy); //Makes A_copy into Q*R-A
 
-    fprintf(GS_test, "Is R upper triangular?:\n");
-    matrix_print(R,GS_test);
+    matrix_print(m,R,"Is R upper triangular?");
 
-    fprintf(GS_test, "Is Q^T*Q=1?:\n");
-    matrix_print(Q_test,GS_test);
+    matrix_print(m,Q_test,"Is Q^T*Q=1?");
 
-    fprintf(GS_test, "Is QR = A? We compute Q*R-A and show it is equal to 0:\n");
-    matrix_print(A_copy,GS_test);
+    matrix_print(m,A_copy,"Is QR = A? We compute Q*R-A and show it is equal to 0");
+
+    gsl_vector* b = gsl_vector_alloc(n);
+    gsl_vector* x = gsl_vector_alloc(m);
+
+    for(int i=0; i<(A->size1); i++){ //Creates a random matrix of size n,m
+        for(int j=0; j<(A->size2); j++){
+            double A_ij = rand()/100;
+            gsl_matrix_set(A,i,j,A_ij);
+        }
+    }
+
+    for (int i=0; i<(b->size); i++){ //Creates a random vector of size n
+        double b_i = rand()/100;
+        gsl_vector_set(b,i,b_i);
+    }
+
+    gsl_matrix_memcpy(A_copy,A); //Makes copy of A and stores in A_copy
+
+    GS_decomp(A,R); //Turns A into Q*R. Q is stored in A.
+
+    GS_solve(A,R,b,x); //Solves Q*R*x = b and stores result in x
+
+    gsl_blas_dgemv(CblasNoTrans,1.,A_copy,x,-1.,b); //Computes A*x-b and stores it in b
+
+    vector_print("Is A*x = b? We compute A*x-b and show it is equal to zero",b);
+
+    printf("\n Part B: \n");
+
+    for(int i=0; i<(A->size1); i++){ //Creates a random matrix of size n,m
+        for(int j=0; j<(A->size2); j++){
+            double A_ij = rand()/100;
+            gsl_matrix_set(A,i,j,A_ij);
+        }
+    }
+
+    gsl_matrix_memcpy(A_copy,A);
+    gsl_matrix* B = gsl_matrix_alloc(n,m);
+    gsl_matrix* I = gsl_matrix_alloc(n,m);
+
+    GS_decomp(A,R);
+
+    GS_inverse(A,R,B);
+
+    gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.,A_copy,B,0.,I);
+
+    matrix_print(n,I,"Is A*B=I?");
+
+    printf("\n Part C: \n");
+
+    /*
+    gsl_vector* testVec = gsl_vector_alloc(n);
+    unsigned int seed = time(NULL);
+    set_data_tall(A,testVec, &seed);
+
+    matrix_print(n,A,"Does set_data_tall work for square matrices?");
+    */
+
+
+    FILE* GS_timer = fopen("out.GS_timer.txt","w");
+
+    for(int i=3; i<30; i++){
+        gsl_matrix* A_time = gsl_matrix_alloc(i,i);
+        gsl_matrix* R_time = gsl_matrix_alloc(i,i);
+        gsl_vector* v_useless = gsl_vector_alloc(i);
+
+        unsigned int seed = time(NULL);
+
+        set_data_tall(A_time,v_useless, &seed);
+
+        clock_t begin = clock();
+        clock_t end   = clock();
+
+        begin = clock();
+        GS_decomp(A_time,R_time);
+        end = clock();
+
+        fprintf(GS_timer, "%d\t%g\n", i, (double)(diffClock(end,begin)));
+
+        gsl_matrix_free(A_time);
+        gsl_matrix_free(R_time);
+    }
 
     return 0;
 }
