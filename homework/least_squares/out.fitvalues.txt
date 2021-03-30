@@ -1,0 +1,8 @@
+Parameters and half-life:
+c_0 = 4.95867 
+ c_1 lambda = -0.171379 
+ Calculated T_1/2 = 4.04452 +/- 0.0707107 
+ Real T_1/2 = 3.63 
+Covariance Matrix: 
+0.356 -0.035 
+-0.035 0.005 

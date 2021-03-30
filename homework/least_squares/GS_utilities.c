@@ -58,7 +58,7 @@ void backsub(gsl_matrix* R, gsl_vector* x){
         double R_ii = gsl_matrix_get(R,i,i); //Stores the i'th diagonal entrance of R in R_ii
         double x_i = gsl_vector_get(x,i); //Stores the i'th entrance of x in x_i
 
-        for (int j=i+1; j<(x->size);j++){ //Loop runs over rows above i'th diagonal entrance
+        for (int j=i+1; j<(x->size); j++){ //Loop runs over rows above i'th diagonal entrance
             double R_ij = gsl_matrix_get(R,i,j); //Stores (i,j) entrance of R in R_ij
             double x_j = gsl_vector_get(x,j); //Stores the j'th entrance of x in x_j
             x_i -= R_ij*x_j;
@@ -74,4 +74,16 @@ void GS_solve(gsl_matrix* Q, gsl_matrix* R, gsl_vector* b, gsl_vector* x){
 
     gsl_blas_dgemv(CblasTrans, 1.0, Q,b,0.0,x); //Computes the matrix vector product Q^T*b and saves the result in x
     backsub(R,x); //Compute backsubstitution of R and x and returns answer in x
+}
+
+void GS_inverse(gsl_matrix* Q, gsl_matrix* R, gsl_matrix* B){
+    gsl_vector* unitVector = gsl_vector_alloc(R->size1);
+    gsl_matrix* RInverse = gsl_matrix_alloc(R->size1,R->size2);
+    for(int i=0; i<(R->size2); i++){ //Loops over every column in R
+        gsl_vector_set_basis(unitVector,i);
+        backsub(R,unitVector); //Solve R*x = e_i, where e_i is the i'th standard basis vector
+        gsl_matrix_set_col(RInverse, i,unitVector); //Turns i'th column in R^-1 into solution to R*x = e_i
+    }
+    gsl_vector_free(unitVector);
+    gsl_blas_dgemm(CblasNoTrans,CblasTrans,1.,RInverse,Q,0.,B);
 }
