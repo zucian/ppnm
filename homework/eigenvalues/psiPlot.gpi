@@ -1,0 +1,11 @@
+set terminal png
+set ylabel "Re(psi)"
+set xlabel "x"
+set title "Wavefunctions"
+set output "psiplot.png"
+plot "out.psiPlot.txt" using 1:2 with points title "Numerical psi #1" \
+, "out.psiPlot.txt" using 1:3 with points title " Numerical psi #2" \
+, "out.psiPlot.txt" using 1:4 with points title "Numerical psi #3" \
+, "out.psiPlot.txt" using 1:5 with lines title "Analytical psi #1" \
+, "out.psiPlot.txt" using 1:6 with lines title "Analytical psi #2" \
+, "out.psiPlot.txt" using 1:7 with lines title "Analytical psi #3" \
