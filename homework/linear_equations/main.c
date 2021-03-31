@@ -46,12 +46,11 @@ void set_data_tall(gsl_matrix* tallMatrix, gsl_vector* tallRHSVector, unsigned i
     }
 }
 
-void vector_print(char s[], gsl_vector* v){
-    printf("%s\n",s);
-    for(int i=0;i<v->size;i++)printf("%10g ",gsl_vector_get(v,i));
-    printf("\n");
+void vector_print(gsl_vector* v, FILE* file){
+    for(int i=0;i<v->size;i++)fprintf(file, "%10g ",gsl_vector_get(v,i));
 }
 
+/*
 void matrix_print(int numOfRows, gsl_matrix* matrixToPrint, char* string ){
     printf("\n%s\n", string);
     for (int rowId = 0; rowId < numOfRows; rowId++){
@@ -64,6 +63,17 @@ void matrix_print(int numOfRows, gsl_matrix* matrixToPrint, char* string ){
             else { printf("%10g\t", 0.0); }
         }
         printf("\n");
+    }
+}
+ */
+
+void matrix_print(gsl_matrix* A,FILE* file){
+    for(int i=0; i<(A->size1);i++){
+        for(int j=0; j<(A->size2); j++){
+            double Aij = gsl_matrix_get(A,i,j);
+            fprintf(file, "%0.3g ",Aij);
+        }
+        fprintf(file,"\n");
     }
 }
 
@@ -102,6 +112,7 @@ void GS_decomp(gsl_matrix* A, gsl_matrix* R){
 }
 
 
+
 void backsub(gsl_matrix* R, gsl_vector* x){
 
     //Takes a upper triangular matrix R and performs back substitution. Returns solution in x.
@@ -120,20 +131,6 @@ void backsub(gsl_matrix* R, gsl_vector* x){
     }
 }
 
-/*
-void backsub(gsl_matrix* upTriangMat, gsl_vector* rhsVec){
-    int numOfRows = (rhsVec -> size);
-
-    for ( int rowId = numOfRows - 1; rowId >= 0; rowId-- ){
-        double rhsVal = gsl_vector_get(rhsVec, rowId);
-
-        for( int varId = rowId + 1; varId < numOfRows; varId++ ){
-            rhsVal -= gsl_matrix_get(upTriangMat, rowId, varId) * gsl_vector_get(rhsVec, varId);
-        }
-        gsl_vector_set(rhsVec, rowId, rhsVal/gsl_matrix_get(upTriangMat, rowId, rowId));
-    }
-}
-*/
 void GS_solve(gsl_matrix* Q, gsl_matrix* R, gsl_vector* b, gsl_vector* x){
 
     //Solves the equation  QRx=b by applying Q^T to the vector b and then performing back_substitution on x
@@ -155,10 +152,11 @@ void GS_inverse(gsl_matrix* Q, gsl_matrix* R, gsl_matrix* B){
 }
 
 int main(){
-    int n=5;
-    int m=5;
+    int n=10;
+    int m=10;
 
-    printf("Part A: \n");
+    FILE* exerciseA = fopen("out.exerciseA.txt","w");
+
 
     gsl_matrix* A = gsl_matrix_alloc(n,m);
     gsl_matrix* A_copy = gsl_matrix_alloc(n,m);
@@ -180,11 +178,14 @@ int main(){
 
     gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.,A,R,-1.,A_copy); //Makes A_copy into Q*R-A
 
-    matrix_print(m,R,"Is R upper triangular?");
+    fprintf(exerciseA,"Is R upper triangular? \n");
+    matrix_print(R,exerciseA);
 
-    matrix_print(m,Q_test,"Is Q^T*Q=1?");
+    fprintf(exerciseA,"\n Is Q^T*Q=1? \n");
+    matrix_print(Q_test,exerciseA);
 
-    matrix_print(m,A_copy,"Is QR = A? We compute Q*R-A and show it is equal to 0");
+    fprintf(exerciseA,"\n Is QR = A? We compute Q*R-A and show it is equal to 0 \n");
+    matrix_print(A_copy,exerciseA);
 
     gsl_vector* b = gsl_vector_alloc(n);
     gsl_vector* x = gsl_vector_alloc(m);
@@ -209,9 +210,12 @@ int main(){
 
     gsl_blas_dgemv(CblasNoTrans,1.,A_copy,x,-1.,b); //Computes A*x-b and stores it in b
 
-    vector_print("Is A*x = b? We compute A*x-b and show it is equal to zero",b);
+    //vector_print("Is A*x = b? We compute A*x-b and show it is equal to zero",b);
 
-    printf("\n Part B: \n");
+    fprintf(exerciseA, "\n Is A*x = b? We compute A*x-b and show it is equal to zero \n");
+    vector_print(b,exerciseA);
+
+    FILE* exerciseB = fopen("out.exerciseB.txt","w");
 
     for(int i=0; i<(A->size1); i++){ //Creates a random matrix of size n,m
         for(int j=0; j<(A->size2); j++){
@@ -230,9 +234,8 @@ int main(){
 
     gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.,A_copy,B,0.,I);
 
-    matrix_print(n,I,"Is A*B=I?");
-
-    printf("\n Part C: \n");
+    fprintf(exerciseB,"Is A*B=I? \n");
+    matrix_print(I,exerciseB);
 
     /*
     gsl_vector* testVec = gsl_vector_alloc(n);
