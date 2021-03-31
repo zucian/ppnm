@@ -290,7 +290,7 @@ int main(){
     int firstLoop = 0;
     double baseTime = 0;
 
-    for(int q=200; q<400; q++){
+    for(int q=200; q<500; q += 5){ //Increase increment by 5 each loop so we dont get too much clutter
         gsl_matrix* A_time = gsl_matrix_alloc(q,q);
         gsl_matrix* R_time = gsl_matrix_alloc(q,q);
         gsl_matrix* gsl_A_time = gsl_matrix_alloc(q,q);
@@ -298,7 +298,7 @@ int main(){
 
         for(int i=0; i<(A_time->size1); i++){ //Creates a random matrix of size n,m
             for(int j=0; j<(A_time->size2); j++){
-                double A_ij = rand()/RAND_MAX;
+                double A_ij = (double) rand()/RAND_MAX*40;
                 gsl_matrix_set(A_time,i,j,A_ij);
             }
         }
@@ -336,7 +336,6 @@ int main(){
         }
 
     }
-
 
     return 0;
 }

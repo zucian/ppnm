@@ -1,9 +1,10 @@
 set terminal png
-set title "Comparing runtime of GSL implementation and own implementation - QR-factorization"
-set xlabel "N"
+set title "Comparing runtime of GSL routine and own routine - QR-factorization"
+set xlabel "N - Amount of rows/columns"
 set ylabel "time"
 set grid
 set tics in
+set key left
 set output "compareplot.png"
 plot "out.GS_timer.txt" using 1:2 with points title "Homemade QR"\
 , "out.GS_timer.txt" using 1:4 with points title "GSL QR" \
