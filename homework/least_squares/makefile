@@ -5,12 +5,12 @@ LDLIBS += $(shell gsl-config --libs)
 
 .PHONEY: clean all
 
-all: fitplot.png out.fitvalues.txt
+all: fitplot.png out.fitvaluesexerciseAandB.txt
 
 fitplot.png: plotsetting.gpi out.dataplot.txt out.fitplot.txt
 	gnuplot $<
 
-out.fitdat.txt out.fitfunc.txt out.fitvalues.txt: main
+out.dataplot.txt out.fitplot.txt out.fitvaluesexerciseAandB.txt: main
 	./$<
 
 main: main.c GS_utilities.o

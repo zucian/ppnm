@@ -68,10 +68,12 @@ int main(){
     double dc_0 = sqrt(gsl_matrix_get(covariance,0,0));
     double dc_1 = sqrt(gsl_matrix_get(covariance,1,1));
 
-    FILE* fitValues = fopen("out.fitvalues.txt","w");
+    FILE* fitValues = fopen("out.fitvaluesexerciseAandB.txt","w");
 
     fprintf(fitValues,"Parameters and half-life:\n");
     fprintf(fitValues,"c_0 = %g \n c_1 lambda = %g \n Calculated T_1/2 = %g +/- %g \n Real T_1/2 = %g \n", c_0,c_1,log(2)/(-c_1),dc_1,3.63);
+    fprintf(fitValues, "Difference between calculated half-life and modern value \n %g - %g = %g \n",log(2)/(-c_1),3.63,log(2)/(-c_1)-3.63);
+    fprintf(fitValues, "This value is not within the estimated uncertainty \n");
     fprintf(fitValues,"Covariance Matrix: \n");
     matrix_print(covariance,fitValues);
 
