@@ -237,38 +237,106 @@ int main(){
     fprintf(exerciseB,"Is A*B=I? \n");
     matrix_print(I,exerciseB);
 
-    /*
-    gsl_vector* testVec = gsl_vector_alloc(n);
-    unsigned int seed = time(NULL);
-    set_data_tall(A,testVec, &seed);
-
-    matrix_print(n,A,"Does set_data_tall work for square matrices?");
-    */
-
 
     FILE* GS_timer = fopen("out.GS_timer.txt","w");
+    /*
+    int count = 0;
+    int i = 100;
 
-    for(int i=3; i<30; i++){
+    while(count<100){
         gsl_matrix* A_time = gsl_matrix_alloc(i,i);
         gsl_matrix* R_time = gsl_matrix_alloc(i,i);
-        gsl_vector* v_useless = gsl_vector_alloc(i);
+        gsl_matrix* gsl_A_time = gsl_matrix_alloc(i,i);
+        gsl_vector* gsl_V_time = gsl_vector_alloc(i);
 
-        unsigned int seed = time(NULL);
+        for(int i=0; i<(A_time->size1); i++){ //Creates a random matrix of size n,m
+            for(int j=0; j<(A_time->size2); j++){
+                double A_ij = rand()/RAND_MAX;
+                gsl_matrix_set(A_time,i,j,A_ij);
+            }
+        }
 
-        set_data_tall(A_time,v_useless, &seed);
+        gsl_matrix_memcpy(gsl_A_time,A_time);
 
-        clock_t begin = clock();
-        clock_t end   = clock();
+        clock_t beginMine = clock();
+        clock_t endMine   = clock();
+        clock_t beginGSL = clock();
+        clock_t endGSL = clock();
 
-        begin = clock();
+        beginMine = clock();
         GS_decomp(A_time,R_time);
-        end = clock();
+        endMine = clock();
 
-        fprintf(GS_timer, "%d\t%g\n", i, (double)(diffClock(end,begin)));
+        double baseTime = 0;
+
+        if(i=100){
+            baseTime = (double)(diffClock(endMine,beginMine));
+        }
+
+        beginGSL = clock();
+        gsl_linalg_QR_decomp(gsl_A_time,gsl_V_time);
+        endGSL = clock();
+
+        double O3 = pow(((double) i)/(100),3)*baseTime;
+        fprintf(GS_timer, "%d\t%g\t%g\n", i, (double)(diffClock(endMine,beginMine)),O3);
 
         gsl_matrix_free(A_time);
         gsl_matrix_free(R_time);
+
+        i += 1;
+        count++;
     }
+     */
+    int firstLoop = 0;
+    double baseTime = 0;
+
+    for(int q=200; q<400; q++){
+        gsl_matrix* A_time = gsl_matrix_alloc(q,q);
+        gsl_matrix* R_time = gsl_matrix_alloc(q,q);
+        gsl_matrix* gsl_A_time = gsl_matrix_alloc(q,q);
+        gsl_vector* gsl_V_time = gsl_vector_alloc(q);
+
+        for(int i=0; i<(A_time->size1); i++){ //Creates a random matrix of size n,m
+            for(int j=0; j<(A_time->size2); j++){
+                double A_ij = rand()/RAND_MAX;
+                gsl_matrix_set(A_time,i,j,A_ij);
+            }
+        }
+
+        gsl_matrix_memcpy(gsl_A_time,A_time);
+
+        clock_t beginMine = clock();
+        clock_t endMine   = clock();
+        clock_t beginGSL = clock();
+        clock_t endGSL = clock();
+
+        beginMine = clock();
+        GS_decomp(A_time,R_time);
+        endMine = clock();
+
+        if(firstLoop==0){
+            baseTime += (double)(diffClock(endMine,beginMine));
+            firstLoop = 1;
+        }
+
+        beginGSL = clock();
+        gsl_linalg_QR_decomp(gsl_A_time,gsl_V_time);
+        endGSL = clock();
+
+        double O3 = pow(((double) q)/(200),3)*baseTime;
+        fprintf(GS_timer, "%d\t%g\t%g\t%g\n", q, (double)(diffClock(endMine,beginMine)),O3,(double)(diffClock(endGSL,beginGSL)));
+
+        gsl_matrix_free(A_time);
+        gsl_matrix_free(R_time);
+        gsl_matrix_free(gsl_A_time);
+        gsl_vector_free(gsl_V_time);
+
+        if(q%10==0){
+            printf("Done with %d \n",q);
+        }
+
+    }
+
 
     return 0;
 }
