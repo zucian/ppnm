@@ -1,0 +1,12 @@
+set terminal png
+set title "Comparing runtime of GSL routine and own routine - Jacobi Diag"
+set xlabel "N - Amount of rows/columns"
+set ylabel "time"
+set grid
+set tics in
+set key left
+set output "compareplot.png"
+plot "out.jacobi_timer.txt" using 1:2 with points title "Homemade Diag"\
+, "out.jacobi_timer.txt" using 1:3 with lines title "O(3)" \
+, "out.jacobi_timer.txt" using 1:4 with points title "Upper Triangular Diag" \
+, "out.jacobi_timer.txt" using 1:5 with points title "GSL Diag" \

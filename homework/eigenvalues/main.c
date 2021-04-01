@@ -18,6 +18,23 @@ void matrix_print(gsl_matrix* A,FILE* file){
     }
 }
 
+double diffClock(clock_t startTime, clock_t endTime){
+    /*
+    Function diffClock, takes two arguments, the time stamp
+    of the start and end of a time interval of interest.
+
+    ¤ startTime : Timestamp of beginning of time interval
+    ¤ endTime   : Timestamp of ending of time interval
+
+    */
+
+    double diffTicks  =  startTime - endTime;
+    double diffms     =  (diffTicks * 10) / CLOCKS_PER_SEC;
+
+    return diffms;
+}
+
+
 void timesJ(gsl_matrix* A, int p, int q, double theta){
 
     //Multiplies the matrix A with the Jacobi matrix J(p,q,theta) from the right
@@ -54,6 +71,7 @@ void Jtimes(gsl_matrix* A, int p, int q, double theta){
 void jacobi_diag(gsl_matrix* A, gsl_matrix* V){
 
     // Jacobi eigenvalue algorithm for real symmetric matrices using cyclic sweeps. Convergence criterion is no change in eigenvalues after sweep.
+    // A is turned into D, diagonal matrix with eigenvalues
 
     int changed = 0;
     int count = 0;
@@ -86,6 +104,38 @@ void jacobi_diag(gsl_matrix* A, gsl_matrix* V){
     } while(changed!=0);
 }
 
+void jacobi_diag_ut(gsl_matrix* A, gsl_matrix* V){
+
+    // Jacobi eigenvalue algorithm for real symmetric matrices using cyclic sweeps. Convergence criterion is no change in eigenvalues after sweep.
+    // A is turned into D, diagonal matrix with eigenvalues. Faster runtime by considering only upper half of the matrix
+
+    int changed = 0;
+    int count = 0;
+    int n = (A->size1);
+
+    do{
+        changed = 0;
+        count++;
+        for(int p=0; p<n-1; p++){
+            for(int q=p+1; q<n; q++){
+                double A_pq = gsl_matrix_get(A,p,q);
+                double A_pp = gsl_matrix_get(A,p,p);
+                double A_qq = gsl_matrix_get(A,q,q);
+                double theta = 0.5*atan(2*A_pq/(A_qq-A_pp));
+                double c = cos(theta);
+                double s = sin(theta);
+                double new_A_pp = c*c*A_pp-2*s*c*A_pq+s*s*A_qq;
+                double new_A_qq = s*s*A_pp+2*s*c*A_pq+c*c*A_qq;
+                if(new_A_pp!=A_pp || new_A_qq!=A_qq){ // do rotation
+                    changed = 1;
+                    timesJ(A, p, q, theta);
+                    Jtimes(A, p, q, -theta); // A←J^T*A*J
+                    timesJ(V, p, q, theta); // V←V*J
+                }
+            }
+        }
+    } while(changed!=0);
+}
 
 int main(){
 
@@ -206,6 +256,88 @@ int main(){
     gsl_matrix_free(W);
     gsl_vector_free(indexForSort);
     gsl_vector_free(energiesHCopy);
+
+    //Exercise C
+
+
+    int firstLoop = 0;
+    double baseTime = 0;
+
+    FILE* jacobi_timer = fopen("out.jacobi_timer.txt","w");
+    FILE* testfile = fopen("out.test.txt","w");
+
+
+    for(int q=100; q<200; q += 2){
+
+        gsl_matrix* randomA = gsl_matrix_alloc(q,q);
+        gsl_matrix* randomV = gsl_matrix_alloc(q,q);
+        gsl_matrix* randomUpperA = gsl_matrix_alloc(q,q);
+        gsl_matrix* randomUpperV = gsl_matrix_alloc(q,q);
+        gsl_matrix* randomGslA = gsl_matrix_alloc(q,q);
+        gsl_matrix* randomGslV = gsl_matrix_alloc(q,q);
+        gsl_vector* gslS = gsl_vector_alloc(q);
+
+
+        for(int i=0; i<q; i++){ //Create random symmetric matrix
+            for(int j=i; j<q; j++){
+                double A_ij = ((double) rand()/RAND_MAX);
+                gsl_matrix_set(randomA,i,j,A_ij);
+                gsl_matrix_set(randomA,j,i,A_ij);
+            }
+        }
+        gsl_matrix_set_identity(randomV);
+
+        gsl_matrix_memcpy(randomUpperA,randomA);
+        gsl_matrix_memcpy(randomUpperV,randomV);
+        gsl_matrix_memcpy(randomGslA,randomA);
+        gsl_matrix_memcpy(randomGslV,randomV);
+
+
+        clock_t beginMine = clock();
+        clock_t endMine   = clock();
+        clock_t beginUT = clock();
+        clock_t endUT  = clock();
+        clock_t beginGSL = clock();
+        clock_t endGSL = clock();
+
+        matrix_print(randomA,testfile);
+
+        beginMine = clock();
+        jacobi_diag(randomA,randomV);
+        endMine = clock();
+
+        beginUT = clock();
+        jacobi_diag_ut(randomUpperA,randomUpperV);
+        endUT = clock();
+
+        beginGSL = clock();
+        gsl_linalg_SV_decomp_jacobi(randomGslA,randomGslV,gslS);
+        endGSL = clock();
+
+        if(firstLoop==0){
+            baseTime += (double)(diffClock(endMine,beginMine));
+            firstLoop = 1;
+        }
+
+        double O3 = pow(((double) q)/(100),3)*baseTime;
+        fprintf(jacobi_timer, "%d\t%g\t%g\t%g\t%g\n", q, (double)(diffClock(endMine,beginMine)),O3,(double)(diffClock(endUT,beginUT)),(double)(diffClock(endGSL,beginGSL)));
+
+
+        gsl_matrix_free(randomA);
+        gsl_matrix_free(randomV);
+        gsl_matrix_free(randomUpperA);
+        gsl_matrix_free(randomUpperV);
+        gsl_matrix_free(randomGslA);
+        gsl_matrix_free(randomGslV);
+        gsl_vector_free(gslS);
+
+        printf("Done with %d \n",q);
+
+
+    }
+
+
+
 
     return 0;
 }

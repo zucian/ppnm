@@ -5,12 +5,14 @@ LDLIBS += $(shell gsl-config --libs)
 
 .PHONEY: clean all
 
-all: psiPlot.png
+all: psiPlot.png compareplot.png
 
+compareplot.png: compareplot.gpi out.jacobi_timer.txt
+	gnuplot $<
 psiPlot.png: psiPlot.gpi out.psiPlot.txt
 	gnuplot $<
 
-out.psiPlot.txt: main
+out.jacobi_timer.txt out.psiPlot.txt: main
 	./$<
 
 clean:
