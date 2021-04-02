@@ -267,7 +267,7 @@ int main(){
     FILE* testfile = fopen("out.test.txt","w");
 
 
-    for(int q=100; q<200; q += 2){
+    for(int q=50; q<150; q += 2){
 
         gsl_matrix* randomA = gsl_matrix_alloc(q,q);
         gsl_matrix* randomV = gsl_matrix_alloc(q,q);
@@ -319,7 +319,7 @@ int main(){
             firstLoop = 1;
         }
 
-        double O3 = pow(((double) q)/(100),3)*baseTime;
+        double O3 = pow(((double) q)/(50),3)*baseTime;
         fprintf(jacobi_timer, "%d\t%g\t%g\t%g\t%g\n", q, (double)(diffClock(endMine,beginMine)),O3,(double)(diffClock(endUT,beginUT)),(double)(diffClock(endGSL,beginGSL)));
 
 
