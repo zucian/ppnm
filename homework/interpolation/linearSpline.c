@@ -1,4 +1,9 @@
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <gsl/gsl_integration.h>
+#include <gsl/gsl_interp.h>
 #include "linearSpline.h"
 #include "utilities.h"
 
@@ -10,7 +15,7 @@ double linear_spline(int nPoints, double* points, double* funcPoints, double eva
     double slope = funcDifference/pointsDifference;
 
     double interpolationValue = funcPoints[interval] + slope*(evalPoints - points[interval]);
-    return interpolationValue
+    return interpolationValue;
 }
 
 double linear_spline_integration(int nPoints, double* points, double* funcPoints, double evalPoints){

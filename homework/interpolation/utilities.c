@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <gsl/gsl_integration.h>
 #include <math.h>
-
 #include "utilities.h"
 
 int binary_search( int numOfPts, double* pts, double evalPt ){
