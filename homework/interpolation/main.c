@@ -5,6 +5,7 @@
 #include <gsl/gsl_interp.h>
 #include "utilities.h"
 #include "linearSpline.h"
+#include "quadraticSpline.h"
 
 int main(){
 
