@@ -10,7 +10,7 @@ quadSpline *initialize_quadratic_spline(int numberOfPoints, double *points, doub
 
     int numberOfEquations = numberOfPoints - 1;
 
-    spline->numberOfPoins = numberOfPoints;
+    spline->numberOfPoints = numberOfPoints;
     spline->points = (double *) (numberOfEquations * sizeof(double));
     spline->functionValueOfPoints = (double *) (numberOfEquations * sizeof(double));
     spline->firstCoefficient = (double *) malloc(numberOfEquations * sizeof(double));
@@ -94,7 +94,7 @@ double evaluate_quadratic_spline_integral(quadSpline *spline, double pointsToEva
         {
             pointsDifference = pointsToEvaluateInterpolant - spline->points[i];
         }
-        integralValue += spline->functionValueOfPoints * pointsDifference +
+        integralValue += spline->functionValueOfPoints[i] * pointsDifference +
                          spline->firstCoefficient[i] * pointsDifference * pointsDifference / 2 +
                          spline->secondCoefficient[i] * pointsDifference * pointsDifference * pointsDifference / 3;
     }

@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <gsl/gsl_integration.h>
 
 int binary_search( int numOfPts, double* pts, double evalPt );
 double integrate_GSL_function(double lowerLimit, double upperLimit, const gsl_function* gslFunction, double toleranceAbsolute, double toleranceRelative, size_t iterationLimit);
