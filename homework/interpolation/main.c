@@ -23,15 +23,9 @@ int main()
     double *xData = malloc(numberOfPoints * sizeof(double));
     double *yData = malloc(numberOfPoints * sizeof(double));
 
-    input_to_array(xData, yData, "sineData");
+    //input_to_array(xData, yData, "sineData");
 
-    /*
-    double lowerLimit = xData[0];
-    double upperLimit = 9.5;
-    double absoluteError = 5e-5;
-    double relativeError = 5e-5;
-    size_t iterationLimit = 1000;
-     */
+
 
     //Exercise A
     FILE *linearSpline = fopen("out.linearSpline.txt", "w");

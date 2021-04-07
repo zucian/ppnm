@@ -60,6 +60,7 @@ int main(){
 
     f functions[2] = {&f_0, &f_1};
 
+
     least_sqr_fit(dataMatrix,functions,nFunctions,c,covariance);
 
     double c_0 = gsl_vector_get(c,0);
