@@ -1,0 +1,26 @@
+A: Plain Monte Carlo Integration 
+
+Testing the plain Monte Carlo routine on √(x) from 0 to 2 
+Exact value of integral is 1.88562
+Numerical estimate using Monte Carlo: 
+Estimate: 1.88569
+Error: 7.4906e-05
+Error estimate from monte carlo: 0.000666494
+
+Testing the plain Monte Carlo routine on ∫_0^π dx/π ∫_0^π dy/π ∫_0^π  dz/π [1-cos(x)cos(y)cos(z)]^{-1} = Γ(1/4)4/(4π3)
+Exact value of integral is 1.3932
+Numerical estimate using Monte Carlo: 
+Estimate: 1.40304
+Error: 0.00983925
+Error estimate from monte carlo: 0.0114552
+
+B: Quasi Monte Carlo Integration
+
+Numerical estimate using quasi Monte Carlo: 
+Estimate: 1.38122
+Error: 0.0119846
+Error estimate from monte carlo quasi: 0.000423865
+
+Test error scaling of quasi- vs pseudo-random 
+Result in errorScaling.txt
+
