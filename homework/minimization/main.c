@@ -14,11 +14,14 @@ int numberOfDataPoints;
 double *energyBW;
 double *crossSection;
 
-double simplex_test_function(double *values)
+double simplex_test_function(double *values) //(x-a)^2+(y-b)^2+1
 {
     double x = values[0];
     double y = values[0];
-
+    double a = 6;
+    double b = 13;
+    double functionValue = (x - a) * (x - a) + (y - b) * (y - b) + 1;
+    return functionValue;
 }
 
 double rosenbrock_valley(gsl_vector *values)//Minimum at (a,a^2) = (1,1)
@@ -116,12 +119,12 @@ int main(int argc, char *argv[])
 
     dimension = 3;
     gsl_vector *minimumBW = gsl_vector_alloc(dimension);
-    gsl_vector_set(minimumBW, 0, measuredMass + 1);
-    gsl_vector_set(minimumBW, 1, 2.7);
+    gsl_vector_set(minimumBW, 0, measuredMass + 1.1);
+    gsl_vector_set(minimumBW, 1, 2.6);
     gsl_vector_set(minimumBW, 2, 8);
 
     quasi_newton_method(deviation_function, minimumBW, tolerance);
-    printf("Initial value (m, Γ, A): (%g, %g, %g) \n", measuredMass + 1, 2.7, 8.0);
+    printf("Initial value (m, Γ, A): (%g, %g, %g) \n", measuredMass + 1.1, 2.6, 8.0);
     printf("Found Minima (m, Γ, A): (%g, %g, %g) \n\n", gsl_vector_get(minimumBW, 0), gsl_vector_get(minimumBW, 1),
            gsl_vector_get(minimumBW, 2));
 
@@ -134,13 +137,35 @@ int main(int argc, char *argv[])
     }
     fclose(outputFilestream);
 
-    printf("Fit can be seen in file higgsFit.png\n");
+    printf("Fit can be seen in file higgsFit.png\n\n");
 
 
     //PART C
-    printf("C: Implement downhill simplex method");
+    printf("C: Implement downhill simplex method\n\n");
 
+    printf("Testing simplex method on (x-5)^2+(y-8)^2+1\n");
+    dimension = 2;
+    int numberOfPoints = dimension + 1;
+    double **simplex = malloc(numberOfPoints * sizeof(double));
+    for (int i = 0; i < numberOfPoints; i++)
+    {
+        simplex[i] = malloc(dimension*sizeof(double));
+    }
 
+    //Simplex points
+    simplex[0][0] = 4;
+    simplex[0][1] = 10;
+    simplex[1][0] = 2;
+    simplex[1][1] = 2;
+    simplex[2][0] = -3;
+    simplex[2][1] = 1;
+
+    printf("Starting points (x,y): (%g,%g), (%g,%g), (%g,%g)\n",simplex[0][0],simplex[0][1],simplex[1][0],simplex[1][1],simplex[2][0],simplex[2][1]);
+
+    int numberOfSteps = downhill_simplex(dimension,simplex_test_function, simplex, tolerance);
+    printf("Found minimum (x,y): (%g,%g)\n", simplex[0][0], simplex[0][1]);
+    printf("Actual minimum (x,y): (%d,%d)\n\n",6,13);
+    printf("Steps for convergence: %d\n:",numberOfSteps);
 
     return 0;
 }

@@ -327,3 +327,4 @@ int downhill_simplex(int dimension, double function(double *), double **simplex,
     }
     return numberOfSteps;
 }
+
