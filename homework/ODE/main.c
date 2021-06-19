@@ -1,94 +1,117 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
-#include <assert.h>
 #include <gsl/gsl_matrix.h>
-#include <gsl/gsl_blas.h>
+#include "rungeKutta.h"
+#include "differentialEquations.h"
 
-void matrix_print(gsl_matrix *A, FILE *file)
+int main(int argc, char *argv[])
 {
-    for (int i = 0; i < (A->size1); i++)
-    {
-        for (int j = 0; j < (A->size2); j++)
-        {
-            double Aij = gsl_matrix_get(A, i, j);
-            fprintf(file, "%0.3g ", Aij);
-        }
-        fprintf(file, "\n");
-    }
-}
+    //PART A
 
-void rkstep12(void f(double x, gsl_vector *y, gsl_vector *derivativeOfY), double x, gsl_vector *yEvaluatedAtX,
-              double stepSize, gsl_vector *yEvaluatedAtXWithStep, gsl_vector *errorEstimate)
-{
-    int dimensionOfYRange = yEvaluatedAtX->size;
+    //Solving u'' = -u
+    int harmonicDimension = 2;
+    gsl_vector *harmonicFunctionValueLeft = gsl_vector_alloc(harmonicDimension);
+    gsl_vector *harmonicFunctionValueRight = gsl_vector_alloc(harmonicDimension);
+    gsl_vector_set(harmonicFunctionValueLeft, 1, 1); //Initial value
 
-    //Allocating memory for vectors
-    gsl_vector *k0 = gsl_vector_alloc(dimensionOfYRange);
-    gsl_vector *k1 = gsl_vector_alloc(dimensionOfYRange);
-    gsl_vector *yFirstOrder = gsl_vector_alloc(dimensionOfYRange);
+    //Settings for ODE solver
+    double leftEndpoint = 0.0;
+    double rightEndPoint = 3 * M_PI;
+    double absoluteAccuracy = 1e-3;
+    double relativeAccuracy = 1e-3;
+    double step = (rightEndPoint - leftEndpoint) / 10;
 
-    //First order
-    f(x, yEvaluatedAtX, k0);
-    for (int i = 0; i < dimensionOfYRange; i++)
-    {
-        double k0Part = gsl_vector_get(k0, i);
-        double yEvaluatedAtXPart = gsl_vector_get(yEvaluatedAtX, i);
-        double yFirstOrderPart = yEvaluatedAtXPart + stepSize / 2 * k0part;
+    FILE *harmonicOutput = fopen(argv[1], "w");
+    rk_driver(&harmonic_function, leftEndpoint, harmonicFunctionValueLeft, rightEndPoint, harmonicFunctionValueRight,
+              step, absoluteAccuracy, relativeAccuracy, harmonicOutput);
+    fclose(harmonicOutput);
 
-        gsl_vector_set(yFirstOrder, i, yFirstOrderPart);
-    }
+    //Solving SIR-model
+    int SIRDimension = 3;
+    gsl_vector *SIRFunctionValueLeft = gsl_vector_alloc(SIRDimension);
+    gsl_vector *SIRFunctionValueRight = gsl_vector_alloc(SIRDimension);
 
-    //Second order
-    f(x + stepSize / 2, yFirstOrder, k1);
-    for (int i = 0; i < dimensionOfYRange; i++)
-    {
-        double k1part = gsl_vector_get(k1, i);
-        double yEvaluatedAtXPart = gsl_vector_get(yEvaluatedAtX, i);
-        double ySecondOrderPart = yEvaluatedAtXPart + h * k1part;
+    leftEndpoint = 0;
+    rightEndPoint = 100;
 
-        gsl_vector_set(yEvaluatedAtXWithStep, i, ySecondOrderPart)
-    }
+    //COVID-19 data in Denmark 12/4/2021
+    double population = 5806000;
+    double totalInfected = 237792;
+    double recovered = 226630;
+    double currentlyInfected = totalInfected - recovered;
+    double vaccinated = 445566;
+    double dead = 2441;
+    double removed = dead + recovered + vaccinated;
 
-    //Estimation of error
-    for (int i = 0; i < dimensionOfYRange; i++)
-    {
-        double k0part = gsl_vector_get(k0, i);
-        double k1part = gsl_vector_get(k1, i);
-        double errorPart = stepSize / 2 * (k0part - k1part);
+    gsl_vector_set(SIRFunctionValueLeft, 0, population - currentlyInfected - removed);
+    gsl_vector_set(SIRFunctionValueLeft, 1, currentlyInfected);
+    gsl_vector_set(SIRFunctionValueLeft, 2, removed);
 
-        gsl_vector_set(errorEstimate, i, errorPart);
-    }
+    FILE *SIROutput = fopen(argv[2], "w");
+    rk_driver(&SIR_model, leftEndpoint, SIRFunctionValueLeft, rightEndPoint, SIRFunctionValueRight, step,
+              absoluteAccuracy, relativeAccuracy, SIROutput);
+    fclose(SIROutput);
 
-    //Freeing allocated memory
-    gsl_vector_free(k0);
-    gsl_vector_free(k1);
-    gsl_vector_free(yFirstOrder);
-}
+    //SIR again, this time with doubled contact time
+    gsl_vector *SIRFunctionValueLeft2 = gsl_vector_alloc(SIRDimension);
+    gsl_vector *SIRFunctionValueRight2 = gsl_vector_alloc(SIRDimension);
+    gsl_vector_set(SIRFunctionValueLeft2, 0, population - currentlyInfected - removed);
+    gsl_vector_set(SIRFunctionValueLeft2, 1, currentlyInfected);
+    gsl_vector_set(SIRFunctionValueLeft2, 2, removed);
+    FILE *SIROutput2 = fopen(argv[3], "w");
+    rk_driver(&SIR_model_new_contact_time, leftEndpoint, SIRFunctionValueLeft2, rightEndPoint, SIRFunctionValueRight2, step,
+              absoluteAccuracy, relativeAccuracy, SIROutput2);
+    fclose(SIROutput2);
 
-void SIR_model_denmark(double x, gsl_vector *y, gsl_vector *derivativeOfY)
-{
-    /*
-    vector y contains susceptible population in first entrance, infected in second, removed in thirds
-    */
+    //PART C
 
-    //Parameters for model
-    double populationOfDenmark = 5.8e6; //Population of denmark 2019
-    double contactsOfInfected = 1.8;
-    double recoveryTime = 14.; //Unit of days
-    double timeBetweenContacts = recoveryTime / contactsOfInfected;
+    //Initial values from article https://arxiv.org/abs/math/0011268
+    leftEndpoint = 0.0;
+    rightEndPoint = 6.32591398;
+    int threeBodyDimension = 12;
 
-    //The three compartments of the population in the SIR model
-    double susceptible = gsl_vector_get(y, 0);
-    double infected = gsl_vector_get(y, 1);
-    double removed = gsl_vector_get(y, 2);
+    gsl_vector *threeBodyFunctionValueLeft = gsl_vector_alloc(threeBodyDimension);
+    gsl_vector *threeBodyFunctionValueRight = gsl_vector_alloc(threeBodyDimension);
 
-    double derivativeOfSusceptible = -infected * susceptible / (populationOfDenmark * timeBetweenContacts);
-    double derivativeOfInfected =
-            infected * susceptible / (populationOfDenmark * timeBetweenContacts) - infected / recoveryTime;
-    double derivativeOfRemoved = infected / recoveryTime
+    double initialX1 = 0.97000436;
+    double initialY1 = -0.24308753;
+    double initialX2 = -0.97000436;
+    double initialY2 = 0.24308753;
+    double initialX3 = 0;
+    double initialY3 = 0;
+    double initialVelocityX3 = -0.93240737;
+    double initialVelocityY3 = -0.86473146;
+    double initialVelocityX1 = -initialVelocityX3 / 2;
+    double initialVelocityY1 = -initialVelocityY3 / 2;
+    double initialVelocityX2 = -initialVelocityX3 / 2;
+    double initialVelocityY2 = -initialVelocityY3 / 2;
 
-    gsl_vector_set(derivativeOfY, 0, derivativeOfSusceptible);
-    gsl_vector_set(derivativeOfY, 1, derivativeOfInfected);
-    gsl_vector_set(derivativeOfY, 2, derivativeOfRemoved);
+    gsl_vector_set(threeBodyFunctionValueLeft, 0, initialX1);
+    gsl_vector_set(threeBodyFunctionValueLeft, 1, initialY1);
+    gsl_vector_set(threeBodyFunctionValueLeft, 2, initialX2);
+    gsl_vector_set(threeBodyFunctionValueLeft, 3, initialY2);
+    gsl_vector_set(threeBodyFunctionValueLeft, 4, initialX3);
+    gsl_vector_set(threeBodyFunctionValueLeft, 5, initialY3);
+    gsl_vector_set(threeBodyFunctionValueLeft, 6, initialVelocityX1);
+    gsl_vector_set(threeBodyFunctionValueLeft, 7, initialVelocityY1);
+    gsl_vector_set(threeBodyFunctionValueLeft, 8, initialVelocityX2);
+    gsl_vector_set(threeBodyFunctionValueLeft, 9, initialVelocityY2);
+    gsl_vector_set(threeBodyFunctionValueLeft, 10, initialVelocityX3);
+    gsl_vector_set(threeBodyFunctionValueLeft, 11, initialVelocityY3);
+
+    FILE *threeBodyOutput = fopen(argv[4], "w");
+    rk_driver(&three_body_problem, leftEndpoint, threeBodyFunctionValueLeft, rightEndPoint, threeBodyFunctionValueRight,
+              step, absoluteAccuracy, relativeAccuracy, threeBodyOutput);
+    fclose(threeBodyOutput);
+
+    //Free memory
+    gsl_vector_free(harmonicFunctionValueLeft);
+    gsl_vector_free(harmonicFunctionValueRight);
+    gsl_vector_free(SIRFunctionValueLeft);
+    gsl_vector_free(SIRFunctionValueRight);
+    gsl_vector_free(SIRFunctionValueLeft2);
+    gsl_vector_free(SIRFunctionValueRight2);
+    gsl_vector_free(threeBodyFunctionValueLeft);
+    gsl_vector_free(threeBodyFunctionValueRight);
+
+    return 0;
 }

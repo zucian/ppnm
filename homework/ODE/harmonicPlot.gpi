@@ -1,0 +1,9 @@
+set terminal png
+set title "Harmonic Function Plot"
+set xlabel "x"
+set ylabel "f(x)"
+set output "harmonicPlot.png"
+set tics in
+set key outside
+plot "harmonicODEOutput.txt" using 1:4 with line linewidth 4 title "Sin(x)"\
+, "harmonicODEOutput.txt" using 1:2 with line linewidth 2 title "Numerical ODE solution"

@@ -1,0 +1,10 @@
+set terminal png
+set title "SIR model of Denmark, $T_c = 6, T_r = 21$"
+set xlabel "t [days]"
+set ylabel "N"
+set output "SIRPlot2.png"
+set tics in
+set key outside
+plot "SIRODEOutput2.txt" using 1:2 with line linewidth 3 title "$S(t), S0 = 5120201$"\
+, "SIRODEOutput2.txt" using 1:3 with line linewidth 3 title "$I(t), I0 = 11162$"\
+, "SIRODEOutput2.txt" using 1:4 with line linewidth 3 title "$R(t), R0 = 674637$"

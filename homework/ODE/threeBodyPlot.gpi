@@ -1,0 +1,10 @@
+set terminal png
+set title "Three body problem, specific stable orbit"
+set xlabel "x(t)"
+set ylabel "y(t)"
+set output "threeBodyPlot.png"
+set tics in
+set key outside
+plot "threeBodyODEOutput.txt" using 2:3 with line linewidth 10 title "$m1$"\
+, "threeBodyODEOutput.txt" using 4:5 with line linewidth 6 title " $m2$"\
+, "threeBodyODEOutput.txt" using 6:7 with line linewidth 2 title " $m3$"

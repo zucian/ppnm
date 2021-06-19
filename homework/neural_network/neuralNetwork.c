@@ -1,3 +1,14 @@
+#include <time.h>
+#include "neuralNetwork.h"
+#include "minimization.h"
+#include "utilities.h"
+
+double random_number(unsigned int *seed)
+{
+    double maxRand = (double) RAND_MAX;           // Maximum random number, cast to double
+    double randNum = (double) rand_r(seed);     // Generate pseudo-random number from seed, cast to double
+    return randNum / maxRand;
+}
 
 double neural_network_response(neuralnetwork *neuralNetwork, double evaluationPoint)
 {
@@ -56,7 +67,7 @@ void neural_network_train(neuralnetwork *neuralNetwork, gsl_vector *inputData, g
     gsl_vector *learnedParamters = gsl_vector_alloc(numberOfNeurons * numberOfParameters);
     for (int i = 0; i < numberOfNeurons * numberOfParameters; i++)
     {
-        gsl_vector_set(learnedParameters, i, randomNumber(&seed));
+        gsl_vector_set(learnedParameters, i, random_number(&seed));
     }
     quasi_newton_method(cost_function, learnedParameters, tolerance);
 
@@ -78,7 +89,7 @@ neuralnetwork *neural_network_allocation(int numberOfNeuronsInput, double (*targ
 void free_neural_network(neuralnetwork *neuralNetwork)
 {
     gsl_vector_free(neuralNetwork->parameters);
-    free(network);
+    free(neuralNetwork);
 }
 
 

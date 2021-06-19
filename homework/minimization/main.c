@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
 
     printf("Fit can be seen in file higgsFit.png\n\n");
 
-
+    /*
     //PART C
     printf("C: Implement downhill simplex method\n\n");
 
@@ -166,6 +166,6 @@ int main(int argc, char *argv[])
     printf("Found minimum (x,y): (%g,%g)\n", simplex[0][0], simplex[0][1]);
     printf("Actual minimum (x,y): (%d,%d)\n\n",6,13);
     printf("Steps for convergence: %d\n:",numberOfSteps);
-
+    */
     return 0;
 }
