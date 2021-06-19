@@ -20,7 +20,7 @@ double simplex_distance(int dimension, double *firstPoint, double *secondPoint);
 
 double simplex_size(int dimension, double **simplex);
 
-void simplex_update(int dimension, double **simplex, const double *functionValues, int *highPointID, int lowPointID,
+void simplex_update(int dimension, double **simplex, const double *functionValues, int *highPointID, int *lowPointID,
                     double *centroidPoint);
 
 void

@@ -1,0 +1,8 @@
+set terminal png
+set title "Higgs boson"
+set xlabel "$E$ [GeV]"
+set ylabel "$\sigma$"
+set key outside
+set output "higgsFit.png"
+plot "higgsFit.txt" using 1:4 with line linewidth 1 title "Fit"\
+, "higgsFit.txt" using 1:2:3 with yerrorbars pointtype 2 title "Data points"

@@ -7,7 +7,8 @@
 #include "minimization.h"
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
-#define MY_DBL_EPSILON 2.22045e-10
+
+#define MY_DOUBLE_EPSILON 2.22045e-10
 
 
 void numerical_gradient(double function(gsl_vector *), gsl_vector *minimum, gsl_vector *gradient)
@@ -23,11 +24,11 @@ void numerical_gradient(double function(gsl_vector *), gsl_vector *minimum, gsl_
 
         if (fabs(minimumI) < stepSize)
         {
-            step = stepSize
+            step = stepSize;
         }
         else
         {
-            step = fabs(minimumI) * stepSize
+            step = fabs(minimumI) * stepSize;
         }
 
         gsl_vector_set(minimum, i, minimumI + step);
@@ -50,13 +51,13 @@ void quasi_newton_method(double function(gsl_vector *), gsl_vector *minimum, dou
     gsl_matrix_set_identity(identityMatrix);
 
     //Allocate memory for needed parts
-    gsl_vector *gradientValue = gsl_vector_alloc(dimensions);
-    gsl_vector *nextGradientValue = gsl_vector_alloc(dimensions);
-    gsl_vector *newtonStep = gsl_vector_alloc(dimensions);
-    gsl_vector *nextMinimum = gsl_vector_alloc(dimensions);
-    gsl_vector *solution = gsl_vector_alloc(dimensions);
-    gsl_vector *solutionChange = gsl_vector_alloc(dimensions);
-    gsl_vector *broydenVector = gsl_vector_alloc(dimensions);
+    gsl_vector *gradientValue = gsl_vector_alloc(dimension);
+    gsl_vector *nextGradientValue = gsl_vector_alloc(dimension);
+    gsl_vector *newtonStep = gsl_vector_alloc(dimension);
+    gsl_vector *nextMinimum = gsl_vector_alloc(dimension);
+    gsl_vector *solution = gsl_vector_alloc(dimension);
+    gsl_vector *solutionChange = gsl_vector_alloc(dimension);
+    gsl_vector *broydenVector = gsl_vector_alloc(dimension);
 
     numerical_gradient(function, minimum, gradientValue);
     double functionValue = function(minimum);
@@ -83,7 +84,7 @@ void quasi_newton_method(double function(gsl_vector *), gsl_vector *minimum, dou
         {
             gsl_vector_memcpy(nextMinimum, minimum);
             gsl_vector_add(nextMinimum, newtonStep);
-            nextFunctionValue = functionValue(nextMinimum);
+            nextFunctionValue = function(nextMinimum);
             double symmetricTransGradient;
             gsl_blas_ddot(newtonStep, gradientValue, &symmetricTransGradient);
 
@@ -106,7 +107,7 @@ void quasi_newton_method(double function(gsl_vector *), gsl_vector *minimum, dou
         gsl_vector_memcpy(solution, nextGradientValue);
         gsl_blas_daxpy(-1, gradientValue, solution);
         gsl_vector_memcpy(solutionChange, newtonStep);
-        gsl_blas_dgemv(CblasNoTransm, -1, inverseHessianMatrix, solution, 1, solutionChange);
+        gsl_blas_dgemv(CblasNoTrans, -1, inverseHessianMatrix, solution, 1, solutionChange);
 
         gsl_matrix *solutionChangeSolutionChangeTrans = gsl_matrix_calloc(dimension, dimension); //u*u^t
         gsl_blas_dsyr(CblasUpper, 1.0, solutionChange, solutionChangeSolutionChangeTrans);
@@ -115,7 +116,7 @@ void quasi_newton_method(double function(gsl_vector *), gsl_vector *minimum, dou
         if (fabs(solutionChangeTransSolution) > 1e-12)
         {
             gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0 / solutionChangeTransSolution,
-                           solutionChangeSolutionChangeTrans, identity, 1.0, inverseHessianMatrix);
+                           solutionChangeSolutionChangeTrans, identityMatrix, 1.0, inverseHessianMatrix);
         }
 
         gsl_vector_memcpy(minimum, nextMinimum);
@@ -125,7 +126,7 @@ void quasi_newton_method(double function(gsl_vector *), gsl_vector *minimum, dou
 
     //Free allocated memory
     gsl_matrix_free(inverseHessianMatrix);
-    gsl_matrix_free(identity);
+    gsl_matrix_free(identityMatrix);
     gsl_vector_free(gradientValue);
     gsl_vector_free(nextGradientValue);
     gsl_vector_free(newtonStep);
@@ -143,7 +144,7 @@ void simplex_reflection(int dimension, const double *highestPoint, const double 
 {
     for (int i = 0; i < dimension; i++)
     {
-        reflectPoint[i] = 2 * centroidPoint[i] - highestPoint[i]
+        reflectPoint[i] = 2 * centroidPoint[i] - highestPoint[i];
     }
 }
 
@@ -160,7 +161,7 @@ simplex_contraction(int dimension, const double *highestPoint, const double *cen
 {
     for (int i = 0; i < dimension; i++)
     {
-        contractedPointPoint[i] = 0.5 * centroidPoint[i] + 0.5 * highestPoint[i];
+        contractedPoint[i] = 0.5 * centroidPoint[i] + 0.5 * highestPoint[i];
     }
 }
 
@@ -181,9 +182,8 @@ void simplex_reduction(int dimension, double **simplex, int lowPointID)
 double simplex_distance(int dimension, double *firstPoint, double *secondPoint)
 {
     double euclideanDistance = 0;
-    for (int = 0;
-    i < dimension;
-    i++){
+    for (int i = 0; i < dimension; i++)
+    {
         euclideanDistance += pow(secondPoint[i] - firstPoint[i], 2);
     }
     return sqrt(euclideanDistance);
@@ -203,7 +203,7 @@ double simplex_size(int dimension, double **simplex)
     return temporaryDistance;
 }
 
-void simplex_update(int dimension, double **simplex, const double *functionValues, int *highPointID, int lowPointID,
+void simplex_update(int dimension, double **simplex, const double *functionValues, int *highPointID, int *lowPointID,
                     double *centroidPoint)
 {
     *highPointID = 0;
@@ -263,7 +263,7 @@ int downhill_simplex(int dimension, double function(double *), double **simplex,
     int highPointID;
     int lowPointID;
 
-    simplex_initiate(dimension, function, simplex, functionValues, &highPointID. & lowPointID, centroid);
+    simplex_initiate(dimension, function, simplex, functionValues, &highPointID, & lowPointID, centroid);
 
     while (simplex_size(dimension, simplex) > simplexSizeGoal)
     {
@@ -301,7 +301,7 @@ int downhill_simplex(int dimension, double function(double *), double **simplex,
                 {
                     simplex[highPointID][i] = reflectedPoint[i];
                 }
-                function[highPointID] = functionValueReflected;
+                functionValues[highPointID] = functionValueReflected;
             }
             else //Contraction
             {

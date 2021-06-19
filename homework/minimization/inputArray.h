@@ -3,5 +3,4 @@
 
 void inputArray(double *xData, double *yData, double *zData, char *inputFilename);
 
-
-#endif //HAVE_INPUTARRAY_H
+#endif
