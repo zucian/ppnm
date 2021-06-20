@@ -1,6 +1,5 @@
 #include <math.h>
 #include "rungeKutta.h"
-#include "differentialEquations.h"
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_blas.h>
@@ -69,19 +68,11 @@ void rk_driver(void (*function)(double, gsl_vector *, gsl_vector *), double left
         if (pathToFile != NULL)
         {
             fprintf(pathToFile, "%.5g \t", position);
-
             for (int i = 0; i < order; i++)
             {
                 fprintf(pathToFile, "%.5g \t", gsl_vector_get(currentFunctionValue, i));
             }
-            if (function == harmonic_function)
-            {
-                fprintf(pathToFile, "%.5g \n", sin(position));
-            }
-            else
-            {
-                fprintf(pathToFile, "\n");
-            }
+            fprintf(pathToFile, "%g\n", position * exp(-position));
         }
 
         double finalStep;

@@ -6,4 +6,4 @@ set key outside
 set output "hydrogenPlot.png"
 set tics in
 plot "hydrogenData.txt" using 1:2 with line linewidth 4 title "Numerical solution"\
-, "hydrogenData.txt" using 1:4 with line linewidth 2 title "Exact solution"
+, "hydrogenData.txt" using 1:4 title "Exact solution"

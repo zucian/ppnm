@@ -162,9 +162,9 @@ int main(int argc, char *argv[])
     //PART C
     printf("C: Better boundary condition for hydrogen atom problem\n\n");
 
-    printf("Bound energy found using root-finding: %g \n", boundEnergy); //Done in part B
+    printf("Bound energy found using root-finding: %g \n\n", boundEnergy); //Done in part B
 
-    printf("Investigating convergence of energy minimum as function of r_max \n");
+    printf("Investigating convergence of energy minimum as function of r_max \n\n");
 
     double exactEnergy = -1.0 / 2.0;
     FILE *convergenceData = fopen("convergenceData.txt", "w");

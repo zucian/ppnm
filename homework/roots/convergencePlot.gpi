@@ -4,6 +4,5 @@ set xlabel "$r_{max}$ $[r_0]$"
 set ylabel "$\epsilon(r_{max})$"
 set key outside
 set output "convergencePlot.png"
-set grid
-plot "convergenceData.txt" using 1:2 with line linewidth 1 title "Unbound"\
-, "convergenceData.txt" using 1:3 with line linewidth 1 title "Bound"
+plot "convergenceData.txt" using 1:2 with line linewidth 4 title "Unbound"\
+, "convergenceData.txt" using 1:3 with line linewidth 4 title "Bound"

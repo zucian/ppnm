@@ -19,10 +19,10 @@ CDATA   =  convergenceData.txt
 .PHONEY: default
 default: print $(IMGFL)
 
-hydrogen_plot.png: $(HGPI) $(HDATA)
+hydrogenPlot.png: $(HGPI) $(HDATA)
 	pyxplot $<
 
-convergence_plot.png: $(CGPI) $(CDATA)
+convergencePlot.png: $(CGPI) $(CDATA)
 	pyxplot $<
 
 print: $(TXT)
