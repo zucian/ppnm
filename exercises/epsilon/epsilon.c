@@ -11,8 +11,9 @@ int main(){
     while(i+1>i){
         i++;
     }
-    printf("my max int while = %i\n",i);
     printf("my INT_MAX = %i \n", INT_MAX);
+    printf("my max int while = %i\n",i);
+
 
     i =1;
     do {
@@ -24,16 +25,14 @@ int main(){
     while(i-1<i){
         i--;
     }
-    printf("my min int while = %i\n",i);
     printf("my INT_MIN = %i \n", INT_MIN);
+    printf("my min int while = %i\n",i);
 
     i =1;
     do {
         i--;
     } while (i-1 < i);
     printf("my min int do = %i\n",i);
-
-    printf("2)\n");
 
     double x=1;
     while(1+x!=1){
@@ -75,7 +74,6 @@ int main(){
     printf("Calculated eps long double for = %Lg\n",le);
     printf("Long Double eps = %Lg\n", LDBL_EPSILON);
 
-    printf("3)\n");
     int max =INT_MAX/2;
     float sum_up_float = 0;
     float sum_down_float = 0;
@@ -99,8 +97,8 @@ int main(){
         sum_down_double += 1.0f/(max-i);
     }
 
-    printf("sum_up_float=%f\n ",sum_up_double);
-    printf("sum_down_float= %f \n", sum_down_double);
+    printf("sum_up_double=%f\n ",sum_up_double);
+    printf("sum_down_double= %f \n", sum_down_double);
 
 
     return 0;
