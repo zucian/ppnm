@@ -8,15 +8,15 @@
 #include "GS_utilities.h"
 
 void
-newton_method(void function(gsl_vector *point, gsl_vector *functionValues), gslvector *startingPoint, double tolerance)
+newton_method(void function(gsl_vector *point, gsl_vector *functionValues), gsl_vector *startingPoint, double tolerance)
 {
     int count = 0;
     int dimension = startingPoint->size;
     double stepSize = sqrt(DBL_EPSILON);
 
     //Allocate memory
-    gsl_matrix *jacobianMatrix = gsl_matrix(dimension, dimension);
-    gsl_matrix *triangleMatrix = gsl_matrix(dimension, dimension);
+    gsl_matrix *jacobianMatrix = gsl_matrix_alloc(dimension, dimension);
+    gsl_matrix *triangleMatrix = gsl_matrix_alloc(dimension, dimension);
     gsl_vector *functionValue = gsl_vector_alloc(dimension);
     gsl_vector *functionValueTemporary = gsl_vector_alloc(dimension);
     gsl_vector *solution = gsl_vector_alloc(dimension);
@@ -33,7 +33,7 @@ newton_method(void function(gsl_vector *point, gsl_vector *functionValues), gslv
         {
             gsl_vector_set(startingPoint, i, gsl_vector_get(startingPoint, i) + stepSize);
             function(startingPoint, functionValueTemporary);
-            for (int j = 0; j < dimension, j++)
+            for (int j = 0; j < dimension; j++)
             {
                 double functionValueTemporaryI = gsl_vector_get(functionValueTemporary, j);
                 double functionValueI = gsl_vector_get(functionValue, j);
@@ -75,7 +75,7 @@ newton_method(void function(gsl_vector *point, gsl_vector *functionValues), gslv
     gsl_matrix_free(triangleMatrix);
     gsl_vector_free(functionValue);
     gsl_vector_free(functionValueTemporary);
-    gsl_vector_free(solution;
+    gsl_vector_free(solution);
     gsl_vector_free(solutionScaled);
     gsl_vector_free(nextFunctionValue);
     gsl_vector_free(nextPoint);

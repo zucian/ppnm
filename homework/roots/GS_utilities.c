@@ -5,7 +5,7 @@
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_vector.h>
-#include <GS_utilities.h>
+#include "GS_utilities.h"
 
 void matrix_print(gsl_matrix *A, FILE *file){
     for(int i=0; i<(A->size1);i++){

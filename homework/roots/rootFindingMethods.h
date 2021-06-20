@@ -4,6 +4,6 @@
 #include <gsl/gsl_vector.h>
 
 void
-newton_method(void function(gsl_vector *point, gsl_vector *functionValues), gslvector *startingPoint, double tolerance);
+newton_method(void function(gsl_vector *point, gsl_vector *functionValues), gsl_vector *startingPoint, double tolerance);
 
 #endif //HAVE_ROOTFINDINGMETHODS_H
