@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     printf("Initial value (x,y): (%g,%g)\n", initialXValue, initialYValue);
     quasi_newton_method(rosenbrock_valley, minimum, tolerance);
     printf("Found minimum (x,y): (%g,%g)\n", gsl_vector_get(minimum, 0), gsl_vector_get(minimum, 1));
-    printf("Actual global minimum is (1,1)\n\n");
+    printf("Actual minimum is parabola including (1,1)\n\n");
 
     //Himmelblaus
     printf("Testing minimization routine on Himmelblau's function\n");
@@ -114,17 +114,17 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < numberOfDataPoints; i++)
     {
-        printf("%g \t %g \t %g\n\n", energyBW[i], crossSection[i], error[i]);
+        printf("%g \t %g \t %g\n", energyBW[i], crossSection[i], error[i]);
     }
 
     dimension = 3;
     gsl_vector *minimumBW = gsl_vector_alloc(dimension);
-    gsl_vector_set(minimumBW, 0, measuredMass + 1.1);
-    gsl_vector_set(minimumBW, 1, 2.6);
+    gsl_vector_set(minimumBW, 0, measuredMass + 1.2);
+    gsl_vector_set(minimumBW, 1, 2.8);
     gsl_vector_set(minimumBW, 2, 8);
 
     quasi_newton_method(deviation_function, minimumBW, tolerance);
-    printf("Initial value (m, Γ, A): (%g, %g, %g) \n", measuredMass + 1.1, 2.6, 8.0);
+    printf("Initial value (m, Γ, A): (%g, %g, %g) \n", measuredMass + 1.2, 2.8, 8.0);
     printf("Found Minima (m, Γ, A): (%g, %g, %g) \n\n", gsl_vector_get(minimumBW, 0), gsl_vector_get(minimumBW, 1),
            gsl_vector_get(minimumBW, 2));
 

@@ -1,0 +1,9 @@
+
+ Results of exercise A can be seen in harmonicPlot.png that contains test solution to an ODE 
+ SIR model results for varying T_c can be seen in SIRPlot.png and SIRPlot2.png 
+
+Results of exercise B can be seen in files harmonicODEOutput.txt, SIRODEOutput.txt, SIRODEOutput2.txt and threeBodyODEOutput.txt 
+ All of them contains points calculated along the way
+
+Results of exercise C can be seen in threeBodyPlot.png
+

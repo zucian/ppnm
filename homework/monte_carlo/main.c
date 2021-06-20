@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     printf("Test error scaling of quasi- vs pseudo-random \n");
 
     char filename[] = "errorScaling.txt";
-    printf("Result in %s\n\n", filename);
+    printf("Result in error_scaling.png \n\n");
     int numberOfReps = (int) 500;
     int stepSize = (int) 100;
 

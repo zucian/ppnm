@@ -113,5 +113,8 @@ int main(int argc, char *argv[])
     gsl_vector_free(threeBodyFunctionValueLeft);
     gsl_vector_free(threeBodyFunctionValueRight);
 
+    printf("\n Results of exercise A can be seen in harmonicPlot.png that contains test solution to an ODE \n SIR model results for varying T_c can be seen in SIRPlot.png and SIRPlot2.png \n\n");
+    printf("Results of exercise B can be seen in files harmonicODEOutput.txt, SIRODEOutput.txt, SIRODEOutput2.txt and threeBodyODEOutput.txt \n All of them contains points calculated along the way\n\n");
+    printf("Results of exercise C can be seen in threeBodyPlot.png\n\n");
     return 0;
 }

@@ -237,13 +237,17 @@ int main(){
     fprintf(exerciseB,"Is A*B=I? \n");
     matrix_print(I,exerciseB);
 
+    gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.,B,A_copy,0.,I);
+
+    fprintf(exerciseB,"\nIs B*A=I? \n");
+    matrix_print(I,exerciseB);
 
     FILE* GS_timer = fopen("out.GS_timer.txt","w");
 
     int firstLoop = 0;
     double baseTime = 0;
 
-    for(int q=200; q<500; q += 5){ //Increase increment by 5 each loop so we dont get too much clutter
+    for(int q=120; q<250; q += 5){ //Increase increment by 5 each loop so we dont get too much clutter
         gsl_matrix* A_time = gsl_matrix_alloc(q,q);
         gsl_matrix* R_time = gsl_matrix_alloc(q,q);
         gsl_matrix* gsl_A_time = gsl_matrix_alloc(q,q);
@@ -276,7 +280,7 @@ int main(){
         gsl_linalg_QR_decomp(gsl_A_time,gsl_V_time);
         endGSL = clock();
 
-        double O3 = pow(((double) q)/(200),3)*baseTime;
+        double O3 = pow(((double) q)/(120),3)*baseTime;
         fprintf(GS_timer, "%d\t%g\t%g\t%g\n", q, (double)(diffClock(endMine,beginMine)),O3,(double)(diffClock(endGSL,beginGSL)));
 
         gsl_matrix_free(A_time);
@@ -289,6 +293,8 @@ int main(){
         }
 
     }
-
+    printf("\nResults of exercise A can be seen in file out.exerciseA.txt\n\n");
+    printf("Results of exercise B can be seen in file out.exerciseB.txt\n\n");
+    printf("Results of exercise C can be seen in file compareplot.png\n");
     return 0;
 }

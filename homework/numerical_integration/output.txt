@@ -1,6 +1,7 @@
 A: Test recursive adaptive integrator: 
 
 Testing integrator on ∫_0^1 dx √(x) = 2/3 
+
 Result of numerical integration: 0.666954
 Error goal: 0.001666666666666666556800847 
 Actual error: 0.0002872423879883845287963595 
@@ -8,6 +9,7 @@ Error estimate: 0.0007716487114193329444056246
 Function calls: 16 
 
 Testing integrator on ∫_0^1 dx 4√(1-x²) = π 
+
 Result of numerical integration: 3.14183
 Error goal: 0.004141592653589792893953359 
 Actual error: 0.0002419244374745055381481507 

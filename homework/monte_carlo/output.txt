@@ -22,5 +22,4 @@ Error: 0.0119846
 Error estimate from monte carlo quasi: 0.000423865
 
 Test error scaling of quasi- vs pseudo-random 
-Result in errorScaling.txt
-
+Result in error_scaling.png

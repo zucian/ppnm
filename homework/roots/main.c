@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
         fprintf(convergenceData, "%g \t %g \t %g \n", maxPoint, fabs(energy-exactEnergy), fabs(boundEnergy-exactEnergy));
     }
     fclose(convergenceData);
-    printf("Convergence results can be seen in convergencePlot.png \n");
+    printf("Convergence results can be seen in convergencePlot.png \n\n");
 
     //Free memory
     gsl_vector_free(minimum);

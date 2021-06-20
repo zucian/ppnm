@@ -13,7 +13,7 @@ fitplot.png: plotsetting.gpi out.dataplot.txt out.fitplot.txt
 out.dataplot.txt out.fitplot.txt out.fitvaluesexerciseAandB.txt: main
 	./$<
 
-main: main.c GS_utilities.o
+main: main.c
 
 clean:
 	$(RM) out.* *.o main *.png
