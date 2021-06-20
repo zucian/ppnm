@@ -1,0 +1,98 @@
+A: Test recursive adaptive integrator: 
+
+Testing integrator on ∫_0^1 dx √(x) = 2/3 
+Result of numerical integration: 0.666954
+Error goal: 0.001666666666666666556800847 
+Actual error: 0.0002872423879883845287963595 
+Error estimate: 0.0007716487114193329444056246 
+Function calls: 16 
+
+Testing integrator on ∫_0^1 dx 4√(1-x²) = π 
+Result of numerical integration: 3.14183
+Error goal: 0.004141592653589792893953359 
+Actual error: 0.0002419244374745055381481507 
+Error estimate: 0.002511826016330469951709503 
+Function calls: 28 
+
+B: Test open quadrature with Clenshaw-Curtis variable transformation
+
+Testing Clenshaw-Curtis on ∫_0^1 dx 1/√(x) = 2 
+
+Result of numerical integration with Clenshaw-Curtis: 1.99999
+Error goal: 0.003000000000000000062450045 
+Actual error: 7.989535677488390774669824e-06 
+Error estimate: 0.002151820567206280676586516 
+Function calls: 16 
+
+Result of numerical integration without Clenshaw-Curtis: 1.99996
+Error goal: 0.003000000000000000062450045 
+Actual error: 3.849992195137375006197544e-05 
+Error estimate: 0.001305726130353901393021943 
+Function calls: 8572 
+
+Testing Clenshaw-Curtis on ∫_0^1 dx ln(x)/√(x) = -4 
+
+Result of numerical integration with Clenshaw-Curtis: -3.99987
+Error goal: 0.005000000000000000104083409 
+Actual error: 0.0001261435385928599828275765 
+Error estimate: 0.003736058825433403920296405 
+Function calls: 96 
+
+Result of numerical integration without Clenshaw-Curtis: -3.99992
+Error goal: 0.005000000000000000104083409 
+Actual error: 8.29410008478248528263066e-05 
+Error estimate: 0.003656259147616781456785473 
+Function calls: 8604 
+
+Testing Clenshaw-Curtis on ∫_0^1 dx 4√(1-x²) = π 
+
+Result of numerical integration with Clenshaw-Curtis: 3.14158
+Error goal: 0.004141592653589792893953359 
+Actual error: 1.626710629309968680900056e-05 
+Error estimate: 0.00342212475666156404688345 
+Function calls: 44 
+
+Result of numerical integration without Clenshaw-Curtis: 3.14183
+Error goal: 0.004141592653589792893953359 
+Actual error: 0.0002419244374745055381481507 
+Error estimate: 0.002511826016330469951709503 
+Function calls: 28 
+
+Result of numerical integration with GSL Clenshaw-Curtis: 3.14159
+Error goal: 0.004141592653589792893953359 
+Actual error: 3.179088889915249183104606e-07 
+Error estimate: 0.001825312538654571409280081 
+Function calls: 135 
+
+C: Infinite Limit 
+
+Testing infinite limits on ∫_-inf^inf dx exp(-x²) = √π 
+
+Result of infinite limit numerical integration: 1.77269
+Error goal: 0.002772453850905515996411177 
+Actual error: 0.0002362493293657230708504358 
+Error estimate: 0.001949670170547971280450295 
+Function calls: 72 
+
+Result of infinite limit GSL integration: 1.77245
+Error goal: 0.002772453850905515996411177 
+Actual error: 1.22146737169259722577408e-12 
+Error estimate: 4.316364671564515420598696e-06 
+Function calls: 0 
+QAGI-method has no option to return number of evaluations, hence function calls = 0 
+
+Testing infinite limits on ∫_0^inf dx 1/(1+x²) = π/2 
+
+Result of infinite limit numerical integration: 1.57087
+Error goal: 0.002570796326794896891065889 
+Actual error: 7.60373087902443955954368e-05 
+Error estimate: 0.001148174733439616401753369 
+Function calls: 24 
+
+Result of infinite limit GSL integration: 1.5708
+Error goal: 0.002570796326794896891065889 
+Actual error: 5.188183216375819029053673e-11 
+Error estimate: 0.0001958561554299810092243106 
+Function calls: 0 
+QAGI-method has no option to return number of evaluations, hence function calls = 0 
+
