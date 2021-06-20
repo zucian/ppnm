@@ -21,4 +21,6 @@ double evaluate_quadratic_spline_derivative(quadSpline *spline, double pointsToE
 
 double evaluate_quadratic_spline_integral(quadSpline *spline, double pointsToEvaluateInterpolant);
 
+void free_quadratic_spline(quadSpline *spline);
+
 #endif //HAVE_QUADRATICSPLINE_H

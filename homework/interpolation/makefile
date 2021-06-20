@@ -1,19 +1,39 @@
-CFLAGS = -Wall -O
-CFLAGS += $(shell gsl-config --cflags)
-LDLIBS = -lm
-LDLIBS += $(shell gsl-config --libs)
+CFLAGS 		 +=  $(shell gsl-config --cflags)
+LDLIBS 		 +=  $(shell gsl-config --libs)
+LDLIBS 		 +=  -lm -Wall
 
-.PHONEY: clean all
+CC		  		=  gcc
+PIPE     		=  cat
 
-all: linearSplinePlot.png
+INPUT   		=  cosData.txt
+LINOUT   		=  linearSplineOutput.txt
+QUADOUT  		=  quadraticSplineOutput.txt
+CUBICOUT  	=  cubicSplineOutput.txt
+EXE   	  	=  main
+OBJ  	  		=  main.o linearSpline.o quadraticSpline.o cubicSpline.o utilities.o
+HDRS    	  =  linearSpline.h quadraticSpline.h cubicSpline.h utilities.h
+IMGFLS  	  =  linearSplinePlot.png quadraticSplinePlot.png cubicSplinePlot.png
+TXT     		=  output.txt
 
-linearSplinePlot.png: linearPlotSetting.gpi out.sineData.txt out.linearSpline.txt
-	gnuplot $<
+.PHONEY: default
+default: $(IMGFLS) print
 
-out.sineData.txt out.linearSpline.txt: main
-	./$<
+print: $(TXT)
+	$(PIPE) $<
 
-main: main.c utilities.o linearSpline.o quadraticSpline.o
+linearSplinePlot.png: linearSplinePlot.gpi linearSplineOutput.txt cosData.txt
+	pyxplot $<
+
+quadraticSplinePlot.png: quadraticSplinePlot.gpi quadraticSplineOutput.txt cosData.txt
+	pyxplot $<
+
+cubicSplinePlot.png: cubicSplinePlot.gpi cubicSplineOutput.txt cosData.txt
+	pyxplot $<
+
+$(LINOUT) $(QUADOUT) $(CUBICOUT) $(TXT): $(EXE) $(INPUT)
+	./$< $(INPUT) $(LINOUT) $(QUADOUT) $(CUBICOUT) 1> $(TXT)
+
+$(EXE): $(OBJ) $(HDRS)
 
 clean:
-	$(RM) out.* *.o main *.png
+	$(RM) $(EXE) $(OUTPUT) $(OBJ) $(IMGFLS) $(TXT)

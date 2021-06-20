@@ -1,41 +1,45 @@
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <gsl/gsl_integration.h>
-#include <gsl/gsl_interp.h>
+#include <assert.h>
 #include "linearSpline.h"
 #include "utilities.h"
 
-double linear_spline(int nPoints, double* points, double* funcPoints, double evalPoints){
+double linear_spline(int numberOfPoints, double *points, double *functionValues, double evaluationPoints)
+{
+    //Ensure proper points
+    assert((numberOfPoints) > 1 && (evaluationPoints >= points[0]) && (evaluationPoints <= points[numberOfPoints]));
 
-    int interval = binary_search(nPoints, points, evalPoints);
-    double funcDifference = (funcPoints[interval+1] - funcPoints[interval]);
-    double pointsDifference = (points[interval+1] - points[interval]);
-    double slope = funcDifference/pointsDifference;
+    //Binary search to find subinterval for evaluation point
+    int whichInterval = binary_search(numberOfPoints, points, evaluationPoints);
+    double functionValueDifference = (functionValues[whichInterval + 1] - functionValues[whichInterval]);
+    double pointsDifference = (points[whichInterval + 1] - points[whichInterval]);
+    double slope = functionValueDifference / pointsDifference;
 
-    double interpolationValue = funcPoints[interval] + slope*(evalPoints - points[interval]);
+    assert(pointsDifference > 0);
+    double interpolationValue = functionValues[whichInterval] + slope * (evaluationPoints - points[whichInterval]);
     return interpolationValue;
 }
 
-double linear_spline_integration(int nPoints, double* points, double* funcPoints, double evalPoints){
-
-    int interval = binary_search(nPoints, points, evalPoints);
+double linear_spline_integrate(int numberOfPoints, double *points, double *functionValues, double evaluationPoint)
+{
+    //Binary search to find subinterval for evaluation point
+    int whichInterval = binary_search(numberOfPoints, points, evaluationPoint);
 
     double integral = 0;
-    double funcDifference;
+    double functionValueDifference;
     double pointsDifference;
     double slope;
 
-    for(int i=0; i <= interval; i++){
-        funcDifference = (funcPoints[i+1] - funcPoints[i]);
-        pointsDifference = (points[i+1] - points[i]);
-        slope = funcDifference/pointsDifference;
+    for (int i = 0; i <= whichInterval; i++)
+    {
+        functionValueDifference = functionValues[i + 1] - functionValues[i];
+        pointsDifference = points[i + 1] - points[i];
+        slope = functionValueDifference / pointsDifference;
 
-        if(i >= interval){
-            pointsDifference = (evalPoints - points[i]);
+        if (i >= whichInterval)
+        {
+            pointsDifference = evaluationPoint - points[i];
         }
-        integral += funcPoints[i]*pointsDifference + slope*pointsDifference*pointsDifference/2;
+        //analytical solution of integral
+        integral += functionValues[i] * pointsDifference + slope * pointsDifference * pointsDifference / 2;
     }
     return integral;
 }

@@ -101,3 +101,11 @@ double evaluate_quadratic_spline_integral(quadSpline *spline, double pointsToEva
     return integralValue;
 }
 
+void free_quadratic_spline(quadSpline *spline)
+{
+    free(spline->points);
+    free(spline->functionValueOfPoints);
+    free(spline->firstCoefficient);
+    free(spline->secondCoefficient);
+    free(spline);
+}
