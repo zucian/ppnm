@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 
 
     //PART A
-    printf("\nA: Linear spline interpolationOld \n\n");
+    printf("\nA: Linear spline interpolation \n\n");
     double resolution = fabs(xData[numberOfPoints - 1] - xData[0]) / numberOfSamples;
 
     for (double i = xData[0]; i < xData[numberOfPoints]; i += resolution)
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 
 
     //PART B
-    printf("B: Quadratic spline interpolationOld \n\n");
+    printf("B: Quadratic spline interpolation \n\n");
 
     quadSpline *quadraticSpline = initialize_quadratic_spline(numberOfPoints, xData, yData);
 
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
     printf("Results can be seen in quadraticSplinePlot.png\n\n");
 
     //PART C
-    printf("C: Cubic spline interpolationOld \n\n");
+    printf("C: Cubic spline interpolation \n\n");
 
     cubicSpline *cubicSpline = initialize_cubic_spline(numberOfPoints, xData, yData);
 

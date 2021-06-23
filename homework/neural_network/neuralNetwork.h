@@ -8,20 +8,27 @@ typedef struct
 {
     int numberOfNeurons;
 
-    double (*target_function)(double);
+    double (*targetFunction)(double);
 
-    gsl_vector *paramters;
+    double (*targetDerivative)(double);
+
+    double (*targetIntegral)(double);
+
+    gsl_vector *parameters;
 } neuralNetwork;
 
-double random_number(unsigned int *seed);
+double neural_network_response(neuralNetwork *neuralNetwork, double evaluationPoint);
 
-double neural_network_response(neuralnetwork *neuralNetwork, double evaluationPoint);
+void neural_network_train(neuralNetwork *neuralNetwork, gsl_vector *inputData, gsl_vector *labels);
 
-void neural_network_train(neuralnetwork *neuralNetwork, gsl_vector *inputData, gsl_vector *labels);
+double neural_network_response_derivative(neuralNetwork *neuralNetwork, double evaluationPoint);
 
-neuralnetwork *neural_network_allocation(int numberOfNeuronsInput, double (*targetFunctionInput)(double));
+double neural_network_response_integral(neuralNetwork *network, double rightPoint, double leftPoint);
 
-void free_neural_network(neuralnetwork *neuralNetwork);
+neuralNetwork *neural_network_allocation(int numberOfNeuronsInput, double (*targetFunctionInput)(double),
+                                         double (*targetDerivativeInput)(double), double(*targetIntegralInput)(double));
+
+void free_neural_network(neuralNetwork *neuralNetwork);
 
 
 #endif //HAVE_NEURALNETWORK_H
