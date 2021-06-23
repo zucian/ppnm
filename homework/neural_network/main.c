@@ -23,10 +23,10 @@ int main(int argc, char *argv[])
     gsl_vector *yData = gsl_vector_alloc(numberOfDataPoints);
     input_to_array(numberOfDataPoints, xData, yData, argv[1]);
 
-    printf("Initialize neural network with %d neurons, one hidden layer \n", numberOfNeurons);
+    printf("Initialize neural network with %d neurons, one hidden layer \n\n", numberOfNeurons);
     neuralNetwork *network = neural_network_allocation(numberOfNeurons, &cos, &negative_sin, &sin);
 
-    printf("Training network: \n");
+    printf("Training network: \n\n");
     neural_network_train(network, xData, yData);
 
     FILE *outputFile = fopen(argv[2], "w");
@@ -40,6 +40,10 @@ int main(int argc, char *argv[])
                 neural_network_response_derivative(network, i), -sin(i),
                 neural_network_response_integral(network, 0, i), sin(i));
     }
+
+    printf("Part A and B\n\n");
+    printf("Network predicted form of cos(x) and its derivative + antiderivative can be seen in file networkPrediction.png\n\n");
+
 
     fclose(outputFile);
 
