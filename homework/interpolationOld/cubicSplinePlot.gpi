@@ -1,8 +1,6 @@
 set terminal png
 set output "$@"
 set key outside
-set tics in
-set grid
 set xlabel "$x$"
 set ylabel "$S_i(x)$"
 set title "$\cos(x)$ - Cubic spline"
