@@ -66,8 +66,8 @@ int main(int argc, char *argv[])
 
     quadSpline *temporaryQuadraticSpline = initialize_quadratic_spline(temporaryNumberOfPoints, xDataTemporary,
                                                                        yDataTemporary);
-
-    for (int i = 1; i < numberOfPoints-1; i++)
+    int counter = 1;
+    for (int i = 1; i < numberOfPoints - 1; i++)
     {
         //Fill subarrays with data
         xDataTemporary[0] = xData[i - 1];
@@ -80,11 +80,33 @@ int main(int argc, char *argv[])
         //Create quadratic spline settings
         temporaryQuadraticSpline = initialize_quadratic_spline(temporaryNumberOfPoints, xDataTemporary, yDataTemporary);
 
+        //If this is first point, use polynomial to estimate p_1
+        if (counter == 1)
+        {
+            double temporaryInterpolantDerivativeStart = evaluate_quadratic_spline_derivative(temporaryQuadraticSpline,
+                                                                                              xDataTemporary[0]);
+            printf("\n%g \t %d\n", temporaryInterpolantDerivativeStart, i);
+        }
+
+        //Evaluate p_i
         double temporaryInterpolantDerivative = evaluate_quadratic_spline_derivative(temporaryQuadraticSpline,
                                                                                      xDataTemporary[1]);
-        printf("\n%g \t %d\n", temporaryInterpolantDerivative,i);
+        printf("\n%g \t %d\n", temporaryInterpolantDerivative, i + 1);
+
+        //Add one to counter that checks if first or last point
+        counter++;
+
+        //If this is last point, use polynomial to estimate p_n
+        if (counter == numberOfPoints - 1)
+        {
+            double temporaryInterpolantDerivativeEnd = evaluate_quadratic_spline_derivative(temporaryQuadraticSpline,
+                                                                                            xDataTemporary[2]);
+            printf("\n%g \t %d\n", temporaryInterpolantDerivativeEnd, i+2);
+        }
 
     }
+
+
     /*
     //Fill subarrays with data
     xDataTemporary[0] = xData[0];
