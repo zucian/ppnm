@@ -6,5 +6,6 @@
 
 int binarySearch( int numOfPts, double* pts, double evalPt );
 void inputToArray(double* XData, double* YData, char* inputFilename );
+void inputToArray3D(double* XData, double* YData, double* ZData, char* inputFilename );
 
 #endif

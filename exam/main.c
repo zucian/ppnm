@@ -8,6 +8,7 @@
 #include "linearSpline.h"
 #include "quadraticSpline.h"
 #include "cubicSpline.h"
+#include "subSpline.h"
 
 double gsl_cos(double x, void *params)
 {
@@ -45,9 +46,12 @@ int main(int argc, char *argv[])
     FILE *linearOutput = fopen(argv[2], "w");
     FILE *quadraticOutput = fopen(argv[3], "w");
     FILE *cubicOutput = fopen(argv[4], "w");
+    FILE *subOutput = fopen(argv[5], "w");
+    FILE *dataFile = fopen(argv[6], "w");
 
     double *xData = malloc(numberOfPoints * sizeof(double));
     double *yData = malloc(numberOfPoints * sizeof(double));
+    double *pData = malloc(numberOfPoints * sizeof(double));
 
     inputToArray(xData, yData, inputFile);
 
@@ -85,13 +89,17 @@ int main(int argc, char *argv[])
         {
             double temporaryInterpolantDerivativeStart = evaluate_quadratic_spline_derivative(temporaryQuadraticSpline,
                                                                                               xDataTemporary[0]);
-            printf("\n%g \t %d\n", temporaryInterpolantDerivativeStart, i);
+            //printf("\n%g \t %d\n", temporaryInterpolantDerivativeStart, i);
+            //fprintf(dataFile,"%g\t%g\t%g\n", xData[i - 1], yData[i - 1],temporaryInterpolantDerivativeStart);
+            pData[i - 1] = temporaryInterpolantDerivativeStart;
         }
 
         //Evaluate p_i
         double temporaryInterpolantDerivative = evaluate_quadratic_spline_derivative(temporaryQuadraticSpline,
                                                                                      xDataTemporary[1]);
-        printf("\n%g \t %d\n", temporaryInterpolantDerivative, i + 1);
+        pData[i] = temporaryInterpolantDerivative;
+        //printf("\n%g \t %d\n", temporaryInterpolantDerivative, i + 1);
+        //fprintf(dataFile,"%g\t%g\t%g\n", xData[i], yData[i],temporaryInterpolantDerivative);
 
         //Add one to counter that checks if first or last point
         counter++;
@@ -101,63 +109,16 @@ int main(int argc, char *argv[])
         {
             double temporaryInterpolantDerivativeEnd = evaluate_quadratic_spline_derivative(temporaryQuadraticSpline,
                                                                                             xDataTemporary[2]);
-            printf("\n%g \t %d\n", temporaryInterpolantDerivativeEnd, i+2);
+            //printf("\n%g \t %d\n", temporaryInterpolantDerivativeEnd, i + 2);
+            //fprintf(dataFile,"%g\t%g\t%g\n", xData[i + 1], yData[i + 1],temporaryInterpolantDerivativeEnd);
+            pData[i + 1] = temporaryInterpolantDerivativeEnd;
         }
 
     }
-
-
-    /*
-    //Fill subarrays with data
-    xDataTemporary[0] = xData[0];
-    xDataTemporary[1] = xData[1];
-    xDataTemporary[2] = xData[2];
-    yDataTemporary[0] = yData[0];
-    yDataTemporary[1] = yData[1];
-    yDataTemporary[2] = yData[2];
-
-    printf("\n%g\n", xDataTemporary[0]);
-    printf("%g\n", xDataTemporary[1]);
-    printf("%g\n", xDataTemporary[2]);
-
-    printf("\n%g\n", yDataTemporary[0]);
-    printf("%g\n", yDataTemporary[1]);
-    printf("%g\n", yDataTemporary[2]);
-
-
-    //First without for-loop to test my method
-    quadSpline *temporaryQuadraticSpline = initialize_quadratic_spline(temporaryNumberOfPoints, xDataTemporary,
-                                                                       yDataTemporary);
-
-    double temporaryInterpolantDerivative = evaluate_quadratic_spline_derivative(temporaryQuadraticSpline,
-                                                                                 xDataTemporary[1]);
-
-    printf("\n%g\n", temporaryInterpolantDerivative);
-
-    xDataTemporary[0] = xData[1];
-    xDataTemporary[1] = xData[2];
-    xDataTemporary[2] = xData[3];
-    yDataTemporary[0] = yData[1];
-    yDataTemporary[1] = yData[2];
-    yDataTemporary[2] = yData[3];
-
-    printf("\n%g\n", xDataTemporary[0]);
-    printf("%g\n", xDataTemporary[1]);
-    printf("%g\n", xDataTemporary[2]);
-
-    printf("\n%g\n", yDataTemporary[0]);
-    printf("%g\n", yDataTemporary[1]);
-    printf("%g\n", yDataTemporary[2]);
-
-    temporaryQuadraticSpline = initialize_quadratic_spline(temporaryNumberOfPoints, xDataTemporary, yDataTemporary);
-
-    double temporaryInterpolantDerivative2 = evaluate_quadratic_spline_derivative(temporaryQuadraticSpline,
-                                                                                  xDataTemporary[1]);
-
-    printf("\n%g\n", temporaryInterpolantDerivative2);
-
-     */
-
+    for (int i = 0; i < numberOfPoints; i++)
+    {
+        printf("%g\n",pData[i]);
+    }
 
     //Settings for function
     double lowerLimit = xData[0];
@@ -243,6 +204,19 @@ int main(int argc, char *argv[])
                 temporaryInterpolantDerivativeGSL);
     }
     printf("Results can be seen in cubicSplinePlot.png\n\n");
+
+    /*
+    //EXAM PART
+
+    double *xDataExam = malloc(numberOfPoints * sizeof(double));
+    double *yDataExam = malloc(numberOfPoints * sizeof(double));
+    double *pDataExam = malloc(numberOfPoints * sizeof(double));
+
+    inputToArray3D(xDataExam,yDataExam,pDataExam,dataFile);
+     */
+
+
+    //subSpline *subSpline = initialize_sub_spline(numberOfPoints, xData, yData);
 
     //Free memory
     fclose(linearOutput);

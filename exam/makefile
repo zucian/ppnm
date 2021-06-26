@@ -9,9 +9,11 @@ INPUT   		=  cosData.txt
 LINOUT   		=  linearSplineOutput.txt
 QUADOUT  		=  quadraticSplineOutput.txt
 CUBICOUT  	=  cubicSplineOutput.txt
+SUBOUT 		= subSplineOutput.txt
+DATAOUT 	= derivativeDataFile.txt
 EXE   	  	=  main
-OBJ  	  		=  main.o linearSpline.o integrateFunction.o quadraticSpline.o cubicSpline.o utilities.o
-HDRS    	  =  linearSpline.h integrateFunction.h quadraticSpline.h cubicSpline.h utilities.h
+OBJ  	  		=  main.o linearSpline.o integrateFunction.o quadraticSpline.o cubicSpline.o subSpline.o utilities.o
+HDRS    	  =  linearSpline.h integrateFunction.h quadraticSpline.h cubicSpline.h subSpline.h utilities.h
 IMGFLS  	  =  linearSplinePlot.png quadraticSplinePlot.png cubicSplinePlot.png
 TXT     		=  output.txt
 
@@ -30,8 +32,8 @@ quadraticSplinePlot.png: quadraticSplinePlot.gpi quadraticSplineOutput.txt cosDa
 cubicSplinePlot.png: cubicSplinePlot.gpi cubicSplineOutput.txt cosData.txt
 	pyxplot $<
 
-$(LINOUT) $(QUADOUT) $(CUBICOUT) $(TXT): $(EXE) $(INPUT)
-	./$< $(INPUT) $(LINOUT) $(QUADOUT) $(CUBICOUT) 1> $(TXT)
+$(LINOUT) $(QUADOUT) $(CUBICOUT) $(SUBOUT) $(TXT): $(EXE) $(INPUT)
+	./$< $(INPUT) $(LINOUT) $(QUADOUT) $(CUBICOUT) $(SUBOUT) $(DATAOUT) 1> $(TXT)
 
 $(EXE): $(OBJ) $(HDRS)
 
