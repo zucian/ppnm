@@ -99,7 +99,7 @@ int main(){
 
     printf("sum_up_double=%f\n ",sum_up_double);
     printf("sum_down_double= %f \n", sum_down_double);
-
+    printf("Function for part 3 is found in equals.c\n\n");
 
     return 0;
 }

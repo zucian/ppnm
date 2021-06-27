@@ -22,6 +22,6 @@ int main(){
     FILE* outA = fopen("out.valueExerciseA.txt","w");
     double exerciseA = aIntegral();
     fprintf(outA, "int(log(x)/sqrt(x), x=0..1) = %g\n", exerciseA);
-    printf("Result can be seen in out.valueExerciseA.txt file in directory");
+    printf("Result can be seen in out.valueExerciseA.txt file in directory\n");
     return 0;
 }
