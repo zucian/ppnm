@@ -1,0 +1,5 @@
+
+ PROJECT 10 - YET ANOTHER CUBIC SUB SPLINE 
+Project introduction is found in README.txt. Theoretical derivation of coefficients is found in projectderivation.pdf
+sub spline on cosine data can be found in subSplinePlot.png
+sub spline on homemade data with jump can be found in subSplinePlot.png

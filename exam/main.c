@@ -22,7 +22,10 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
-
+    printf("\n PROJECT 10 - YET ANOTHER CUBIC SUB SPLINE \n");
+    printf("Project introduction is found in README.txt. Theoretical derivation of coefficients is found in projectderivation.pdf\n");
+    printf("sub spline on cosine data can be found in subSplinePlot.png\n");
+    printf("sub spline on homemade data with jump can be found in subSplinePlot.png\n\n");
     int numberOfPoints = 20;
     int numberOfSamples = (int) 1e3;
 
@@ -82,21 +85,21 @@ int main(int argc, char *argv[])
         counter++;
         if (counter == numberOfPointsJump)
         {
-            fprintf(jumpData,"%g\t%g", xDataJump[i],yDataJump[i]);
+            fprintf(jumpData, "%g\t%g", xDataJump[i], yDataJump[i]);
         }
         else
         {
-            fprintf(jumpData,"%g\t%g\n", xDataJump[i],yDataJump[i]);
+            fprintf(jumpData, "%g\t%g\n", xDataJump[i], yDataJump[i]);
         }
     }
 
-    estimate_derivative(numberOfPointsJump,xDataJump,yDataJump,pDataJump);
-    subSpline *subSplineJump = initialize_sub_spline(numberOfPointsJump,xDataJump,yDataJump,pDataJump);
+    estimate_derivative(numberOfPointsJump, xDataJump, yDataJump, pDataJump);
+    subSpline *subSplineJump = initialize_sub_spline(numberOfPointsJump, xDataJump, yDataJump, pDataJump);
 
     int numberOfSamplesJump = 500;
     double resolutionJump = fabs(xDataJump[numberOfPointsJump - 1] - xDataJump[0]) / numberOfSamplesJump;
 
-    for (double i = xDataJump[0]; i < xDataJump[numberOfPointsJump-1]; i += resolutionJump)
+    for (double i = xDataJump[0]; i < xDataJump[numberOfPointsJump - 1]; i += resolutionJump)
     {
         double temporaryInterpolantSubSpline = evaluate_sub_spline(subSplineJump, i);
         fprintf(jumpOutput, "%g\t%g\n", i, temporaryInterpolantSubSpline);

@@ -13,5 +13,5 @@ some of the functions I had made earlier, and I wanted to compare to my cubic sp
 I used the spline on tabulated data from the cosine function, and some random data with a jump that I made up.
 The results can be seen in subSplineplot.png and subSplinePlotJump.png
 
-
+The project could have been tested on more data, but I am happy with the result and evaluate myself at 6 or 7 out of 10
 
