@@ -37,72 +37,11 @@ int main(int argc, char *argv[])
     double *yData = malloc(numberOfPoints * sizeof(double));
     double *pData = malloc(numberOfPoints * sizeof(double));
 
+    //Insert data form file "cosData.txt" into arrays
     inputToArray(xData, yData, inputFile);
 
+    //Esimate p_i of data
     estimate_derivative(numberOfPoints, xData, yData, pData);
-
-    /*
-    //Build quadratic spline through each inner point with its neighbouring points
-    int temporaryNumberOfPoints = 3;
-
-    double xDataTemporary[3]; //Array that holds points x_{i-1}, x_i, x_{i+1}
-    double yDataTemporary[3]; //Array that holds points y_{i-1}, y_i, y_{i+1}
-
-    xDataTemporary[0] = 0.0;
-    xDataTemporary[1] = 0.0;
-    xDataTemporary[2] = 0.0;
-    yDataTemporary[0] = 0.0;
-    yDataTemporary[1] = 0.0;
-    yDataTemporary[2] = 0.0;
-
-    quadSpline *temporaryQuadraticSpline = initialize_quadratic_spline(temporaryNumberOfPoints, xDataTemporary,
-                                                                       yDataTemporary);
-    int counter = 1;
-    for (int i = 1; i < numberOfPoints - 1; i++)
-    {
-        //Fill subarrays with data
-        xDataTemporary[0] = xData[i - 1];
-        xDataTemporary[1] = xData[i];
-        xDataTemporary[2] = xData[i + 1];
-        yDataTemporary[0] = yData[i - 1];
-        yDataTemporary[1] = yData[i];
-        yDataTemporary[2] = yData[i + 1];
-
-        //Create quadratic spline settings
-        temporaryQuadraticSpline = initialize_quadratic_spline(temporaryNumberOfPoints, xDataTemporary, yDataTemporary);
-
-        //If this is first point, use polynomial to estimate p_1
-        if (counter == 1)
-        {
-            double temporaryInterpolantDerivativeStart = evaluate_quadratic_spline_derivative(temporaryQuadraticSpline,
-                                                                                              xDataTemporary[0]);
-            //printf("\n%g \t %d\n", temporaryInterpolantDerivativeStart, i);
-            //fprintf(dataFile,"%g\t%g\t%g\n", xData[i - 1], yData[i - 1],temporaryInterpolantDerivativeStart);
-            pData[i - 1] = temporaryInterpolantDerivativeStart;
-        }
-
-        //Evaluate p_i
-        double temporaryInterpolantDerivative = evaluate_quadratic_spline_derivative(temporaryQuadraticSpline,
-                                                                                     xDataTemporary[1]);
-        pData[i] = temporaryInterpolantDerivative;
-        //printf("\n%g \t %d\n", temporaryInterpolantDerivative, i + 1);
-        //fprintf(dataFile,"%g\t%g\t%g\n", xData[i], yData[i],temporaryInterpolantDerivative);
-
-        //Add one to counter that checks if first or last point
-        counter++;
-
-        //If this is last point, use polynomial to estimate p_n
-        if (counter == numberOfPoints - 1)
-        {
-            double temporaryInterpolantDerivativeEnd = evaluate_quadratic_spline_derivative(temporaryQuadraticSpline,
-                                                                                            xDataTemporary[2]);
-            //printf("\n%g \t %d\n", temporaryInterpolantDerivativeEnd, i + 2);
-            //fprintf(dataFile,"%g\t%g\t%g\n", xData[i + 1], yData[i + 1],temporaryInterpolantDerivativeEnd);
-            pData[i + 1] = temporaryInterpolantDerivativeEnd;
-        }
-
-    }
-    */
 
     //Spacing between data points
     double resolution = fabs(xData[numberOfPoints - 1] - xData[0]) / numberOfSamples;
@@ -121,20 +60,10 @@ int main(int argc, char *argv[])
         );
     }
 
-
-    //EXAM PART
-
-    //Print loop to show xData, yData, and pData content
-    /*
-    for (int i = 0; i < numberOfPoints; i++)
-    {
-        printf("%d\t%g\t%g\t%g\n", i, xData[i], yData[i], pData[i]);
-    }
-     */
-
-
+    //Initializing sub spline for cosine function
     subSpline *subSplineCos = initialize_sub_spline(numberOfPoints, xData, yData, pData);
 
+    //Compute sub spline value
     for (double i = xData[0]; i < xData[numberOfPoints]; i += resolution)
     {
         double temporaryInterpolantSubSpline = evaluate_sub_spline(subSplineCos, i);
@@ -162,19 +91,16 @@ int main(int argc, char *argv[])
     }
 
     estimate_derivative(numberOfPointsJump,xDataJump,yDataJump,pDataJump);
-
     subSpline *subSplineJump = initialize_sub_spline(numberOfPointsJump,xDataJump,yDataJump,pDataJump);
 
-    double resolutionJump = fabs(xDataJump[numberOfPointsJump - 1] - xDataJump[0]) / numberOfSamples;
+    int numberOfSamplesJump = 500;
+    double resolutionJump = fabs(xDataJump[numberOfPointsJump - 1] - xDataJump[0]) / numberOfSamplesJump;
 
-    printf("%g\n", xDataJump[0]);
-    printf("%g\n", xDataJump[numberOfPointsJump-1]);
     for (double i = xDataJump[0]; i < xDataJump[numberOfPointsJump-1]; i += resolutionJump)
     {
         double temporaryInterpolantSubSpline = evaluate_sub_spline(subSplineJump, i);
         fprintf(jumpOutput, "%g\t%g\n", i, temporaryInterpolantSubSpline);
     }
-
 
     //Free memory
     fclose(cubicOutput);
