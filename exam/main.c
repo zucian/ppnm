@@ -105,9 +105,11 @@ int main(int argc, char *argv[])
     //Free memory
     fclose(cubicOutput);
     fclose(subOutput);
+    fclose(jumpOutput);
 
     free_cubic_spline(cubicSpline);
     free_sub_spline(subSplineCos);
+    free_sub_spline(subSplineJump);
 
     return 0;
 }

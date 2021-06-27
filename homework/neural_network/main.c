@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
                 neural_network_response_integral(network, 0, i), sin(i));
     }
 
-    printf("Part A and B\n\n");
+    printf("Part A and B:\n\n");
     printf("Network predicted form of cos(x) and its derivative + antiderivative can be seen in file networkPrediction.png\n\n");
 
 

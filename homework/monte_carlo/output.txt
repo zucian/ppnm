@@ -1,3 +1,4 @@
+
 A: Plain Monte Carlo Integration 
 
 Testing the plain Monte Carlo routine on √(x) from 0 to 2 
@@ -16,10 +17,12 @@ Error estimate from monte carlo: 0.0114552
 
 B: Quasi Monte Carlo Integration
 
+Testing the quasi Monte Carlo routine on ∫_0^π dx/π ∫_0^π dy/π ∫_0^π  dz/π [1-cos(x)cos(y)cos(z)]^{-1} = Γ(1/4)4/(4π3)
 Numerical estimate using quasi Monte Carlo: 
 Estimate: 1.38122
 Error: 0.0119846
 Error estimate from monte carlo quasi: 0.000423865
 
 Test error scaling of quasi- vs pseudo-random 
-Result in error_scaling.png
+Result in errorScaling.png 
+

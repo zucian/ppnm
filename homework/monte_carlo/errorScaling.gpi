@@ -3,7 +3,7 @@ set title "Error scaling"
 set xlabel "N (Number of sampled points)"
 set ylabel "Error"
 set key outside
-set output "error_scaling.png"
+set output "errorScaling.png"
 set log y
 plot "errorScaling.txt" using 1:2 with line linewidth 1 title "Pseudo-random"\
 , "errorScaling.txt" using 1:3 with line linewidth 1 title "Quasi-random"

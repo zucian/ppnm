@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     int numberOfPoints = (int) 1e6;
 
     // PART A
-    printf("A: Plain Monte Carlo Integration \n\n");
+    printf("\nA: Plain Monte Carlo Integration \n\n");
 
     //Square root test function
     printf("Testing the plain Monte Carlo routine on √(x) from 0 to 2 \n");
@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
     plain_monte_carlo_quasi(dimensionDmitri, lowerBoundDmitri, upperBoundDmitri, dmitri_function, numberOfPoints,
                             &resultDmitriQuasi,
                             &errorDmitriQuasi);
+    printf("Testing the quasi Monte Carlo routine on ∫_0^π dx/π ∫_0^π dy/π ∫_0^π  dz/π [1-cos(x)cos(y)cos(z)]^{-1} = Γ(1/4)4/(4π3)\n");
     printf("Numerical estimate using quasi Monte Carlo: \n");
     printf("Estimate: %g\n", resultDmitriQuasi);
     printf("Error: %g\n", fabs(resultDmitriQuasi - exactValueDmitriFunction));
@@ -83,7 +84,7 @@ int main(int argc, char *argv[])
     printf("Test error scaling of quasi- vs pseudo-random \n");
 
     char filename[] = "errorScaling.txt";
-    printf("Result in error_scaling.png \n\n");
+    printf("Result in errorScaling.png \n\n");
     int numberOfReps = (int) 500;
     int stepSize = (int) 100;
 

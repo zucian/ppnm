@@ -369,7 +369,7 @@ int main()
         gsl_matrix_free(randomGslV);
         gsl_vector_free(gslS);
 
-        printf("Done with %d \n", q);
+        printf("Done with %d dimension matrix\n", q);
 
 
     }

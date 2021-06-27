@@ -17,6 +17,7 @@ Error estimate: 0.002511826016330469951709503
 Function calls: 28 
 
 B: Test open quadrature with Clenshaw-Curtis variable transformation
+ Last integral is compared to GSL routine, as mentioned in exercise
 
 Testing Clenshaw-Curtis on ∫_0^1 dx 1/√(x) = 2 
 

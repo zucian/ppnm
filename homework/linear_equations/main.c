@@ -50,23 +50,6 @@ void vector_print(gsl_vector* v, FILE* file){
     for(int i=0;i<v->size;i++)fprintf(file, "%10g ",gsl_vector_get(v,i));
 }
 
-/*
-void matrix_print(int numOfRows, gsl_matrix* matrixToPrint, char* string ){
-    printf("\n%s\n", string);
-    for (int rowId = 0; rowId < numOfRows; rowId++){
-        gsl_vector_view matrixToPrint_row = gsl_matrix_row (matrixToPrint, rowId);
-        gsl_vector* vector = &matrixToPrint_row.vector;
-        for(int iter = 0; iter < vector -> size; iter++){
-            if ( gsl_vector_get(vector, iter) > 1e-10 ){
-                printf("%10g\t", gsl_vector_get(vector, iter));
-            }
-            else { printf("%10g\t", 0.0); }
-        }
-        printf("\n");
-    }
-}
- */
-
 void matrix_print(gsl_matrix* A,FILE* file){
     for(int i=0; i<(A->size1);i++){
         for(int j=0; j<(A->size2); j++){
@@ -289,7 +272,7 @@ int main(){
         gsl_vector_free(gsl_V_time);
 
         if(q%10==0){
-            printf("Done with %d \n",q);
+            printf("Done with %d dimension matrix\n",q);
         }
 
     }

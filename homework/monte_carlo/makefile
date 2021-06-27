@@ -30,4 +30,4 @@ $(TXT) : $(EXE)
 $(EXE): $(OBJ) $(HDRS)
 
 clean:
-	$(RM) $(EXE) $(TXT) $(OBJ)
+	$(RM) $(EXE) $(TXT) $(OBJ) $(ERRPLOT)

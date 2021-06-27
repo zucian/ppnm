@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 
 
     //PART B
-    printf("B: Test open quadrature with Clenshaw-Curtis variable transformation\n\n");
+    printf("B: Test open quadrature with Clenshaw-Curtis variable transformation\n Last integral is compared to GSL routine, as mentioned in exercise\n\n");
 
     //First function
     printf("Testing Clenshaw-Curtis on ∫_0^1 dx 1/√(x) = 2 \n\n");
