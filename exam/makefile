@@ -6,15 +6,14 @@ CC		  		=  gcc
 PIPE     		=  cat
 
 INPUT   		=  cosData.txt
-LINOUT   		=  linearSplineOutput.txt
-QUADOUT  		=  quadraticSplineOutput.txt
 CUBICOUT  	=  cubicSplineOutput.txt
 SUBOUT 		= subSplineOutput.txt
-DATAOUT 	= derivativeDataFile.txt
+SUBOUTJUMP		= subSplineOutputJump.txt
+JUMPDATA 	= jumpData.txt
 EXE   	  	=  main
-OBJ  	  		=  main.o linearSpline.o integrateFunction.o quadraticSpline.o cubicSpline.o subSpline.o utilities.o
-HDRS    	  =  linearSpline.h integrateFunction.h quadraticSpline.h cubicSpline.h subSpline.h utilities.h
-IMGFLS  	  =  linearSplinePlot.png quadraticSplinePlot.png cubicSplinePlot.png
+OBJ  	  		=  main.o integrateFunction.o quadraticSpline.o cubicSpline.o subSpline.o utilities.o
+HDRS    	  =  integrateFunction.h quadraticSpline.h cubicSpline.h subSpline.h utilities.h
+IMGFLS  	  =  cubicSplinePlot.png subSplinePlot.png subSplinePlotJump.png
 TXT     		=  output.txt
 
 .PHONEY: default
@@ -23,17 +22,17 @@ default: $(IMGFLS) print
 print: $(TXT)
 	$(PIPE) $<
 
-linearSplinePlot.png: linearSplinePlot.gpi linearSplineOutput.txt cosData.txt
-	pyxplot $<
-
-quadraticSplinePlot.png: quadraticSplinePlot.gpi quadraticSplineOutput.txt cosData.txt
-	pyxplot $<
-
 cubicSplinePlot.png: cubicSplinePlot.gpi cubicSplineOutput.txt cosData.txt
 	pyxplot $<
 
+subSplinePlot.png: subSplinePlot.gpi subSplineOutput.txt cosData.txt
+	pyxplot $<
+
+subSplinePlotJump.png: subSplinePlotJump.gpi subSplineOutputJump.txt jumpData.txt
+	pyxplot $<
+
 $(LINOUT) $(QUADOUT) $(CUBICOUT) $(SUBOUT) $(TXT): $(EXE) $(INPUT)
-	./$< $(INPUT) $(LINOUT) $(QUADOUT) $(CUBICOUT) $(SUBOUT) $(DATAOUT) 1> $(TXT)
+	./$< $(INPUT) $(CUBICOUT) $(SUBOUT) $(SUBOUTJUMP) $(JUMPDATA) 1> $(TXT)
 
 $(EXE): $(OBJ) $(HDRS)
 

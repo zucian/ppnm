@@ -1,0 +1,9 @@
+set terminal png
+set output "$@"
+set key outside
+set xlabel "$x$"
+set ylabel "$S_i(x)$"
+set title " Data with jump - sub spline"
+set output "subSplinePlotJump.png"
+plot "subSplineOutputJump.txt" using 1:2 with line lw 2 title "Interpolant" \
+, "jumpData.txt" using 1:2 with points col Black title "Tabulated data"

@@ -5,7 +5,6 @@
 #include <gsl/gsl_interp.h>
 #include "utilities.h"
 #include "integrateFunction.h"
-#include "linearSpline.h"
 #include "quadraticSpline.h"
 #include "cubicSpline.h"
 #include "subSpline.h"
@@ -13,21 +12,6 @@
 double gsl_cos(double x, void *params)
 {
     return cos(x);
-}
-
-void cosine_integral(int numberOfPoints, double *xData, double *yData, double lowerLimit, double upperLimit,
-                     double absoluteError,
-                     double relativeError, size_t iterationLimit)
-{
-    double integralValue = linear_spline_integrate(numberOfPoints, xData, yData, upperLimit);
-
-    //Gsl integrate settings
-    gsl_function gslFuncCos;
-    gslFuncCos.function = &gsl_cos;
-    gslFuncCos.params = NULL;
-    double integralValueGSL = integrate_function(lowerLimit, upperLimit, &gslFuncCos, absoluteError, relativeError,
-                                                 iterationLimit);
-
 }
 
 int main(int argc, char *argv[])
@@ -38,16 +22,16 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
+
     int numberOfPoints = 20;
     int numberOfSamples = (int) 1e3;
 
     //Open files for data
     char *inputFile = argv[1];
-    FILE *linearOutput = fopen(argv[2], "w");
-    FILE *quadraticOutput = fopen(argv[3], "w");
-    FILE *cubicOutput = fopen(argv[4], "w");
-    FILE *subOutput = fopen(argv[5], "w");
-    FILE *dataFile = fopen(argv[6], "w");
+    FILE *cubicOutput = fopen(argv[2], "w");
+    FILE *subOutput = fopen(argv[3], "w");
+    FILE *jumpOutput = fopen(argv[4], "w");
+    FILE *jumpData = fopen(argv[5], "w");
 
     double *xData = malloc(numberOfPoints * sizeof(double));
     double *yData = malloc(numberOfPoints * sizeof(double));
@@ -55,6 +39,9 @@ int main(int argc, char *argv[])
 
     inputToArray(xData, yData, inputFile);
 
+    estimate_derivative(numberOfPoints, xData, yData, pData);
+
+    /*
     //Build quadratic spline through each inner point with its neighbouring points
     int temporaryNumberOfPoints = 3;
 
@@ -115,117 +102,86 @@ int main(int argc, char *argv[])
         }
 
     }
-    for (int i = 0; i < numberOfPoints; i++)
-    {
-        printf("%g\n",pData[i]);
-    }
+    */
 
-    //Settings for function
-    double lowerLimit = xData[0];
-    double upperLimit = 11;
-    double absoluteError = 1e-6;
-    double relativeError = 1e-6;
-    size_t iterationLimit = 999;
-
-    //Compute integral using GSL
-    cosine_integral(numberOfPoints, xData, yData, lowerLimit, upperLimit, absoluteError, relativeError, iterationLimit);
-
-    //Settings for GSL interpolationOld to compare
-    gsl_interp *linearInterpolationGSL = gsl_interp_alloc(gsl_interp_linear, numberOfPoints);
-    gsl_interp *quadraticInterpolationGSL = gsl_interp_alloc(gsl_interp_polynomial, numberOfPoints);
-    gsl_interp *cubicInterpolationGSL = gsl_interp_alloc(gsl_interp_cspline, numberOfPoints);
-    gsl_interp_init(linearInterpolationGSL, xData, yData, numberOfPoints);
-    gsl_interp_init(quadraticInterpolationGSL, xData, yData, numberOfPoints);
-    gsl_interp_init(cubicInterpolationGSL, xData, yData, numberOfPoints);
-
-
-    //PART A
-    printf("\nA: Linear spline interpolation \n\n");
+    //Spacing between data points
     double resolution = fabs(xData[numberOfPoints - 1] - xData[0]) / numberOfSamples;
 
-    for (double i = xData[0]; i < xData[numberOfPoints]; i += resolution)
-    {
-
-        double temporaryInterpolant = linear_spline(numberOfPoints, xData, yData, i);
-        double temporaryInterpolantGSL = gsl_interp_eval(linearInterpolationGSL, xData, yData, i, NULL);
-        double temporaryInterpolantIntegral = linear_spline_integrate(numberOfPoints, xData, yData, i);
-        double temporaryInterpolantIntegralGSL = gsl_interp_eval_integ(linearInterpolationGSL, xData, yData, xData[0],
-                                                                       i, NULL);
-
-        //Output to linear data file
-        fprintf(linearOutput, "%g\t%g\t%g\t%g\t%g\n", i, temporaryInterpolant, temporaryInterpolantGSL,
-                temporaryInterpolantIntegral,
-                temporaryInterpolantIntegralGSL);
-    }
-    printf("Results can be seen in linearSplinePlot.png\n\n");
-
-
-    //PART B
-    printf("B: Quadratic spline interpolation \n\n");
-
-    quadSpline *quadraticSpline = initialize_quadratic_spline(numberOfPoints, xData, yData);
-
-    for (double i = xData[0]; i < xData[numberOfPoints]; i += resolution)
-    {
-        double temporaryInterpolant = evaluate_quadratic_spline(quadraticSpline, i);
-        double temporaryInterpolantGSL = gsl_interp_eval(quadraticInterpolationGSL, xData, yData, i, NULL);
-        double temporaryInterpolantIntegral = evaluate_quadratic_spline_integral(quadraticSpline, i);
-        double temporaryInterpolantIntegralGSL = gsl_interp_eval_integ(quadraticInterpolationGSL, xData, yData,
-                                                                       xData[0], i, NULL);
-        double temporaryInterpolantDerivative = evaluate_quadratic_spline_derivative(quadraticSpline, i);
-        double temporaryInterpolantDerivativeGSL = gsl_interp_eval_deriv(quadraticInterpolationGSL, xData, yData, i,
-                                                                         NULL);
-
-        //Output to quadratic data file
-        fprintf(quadraticOutput, "%g\t%g\t%g\t%g\t%g\t%g\t%g\n", i, temporaryInterpolant, temporaryInterpolantGSL,
-                temporaryInterpolantIntegral, temporaryInterpolantIntegralGSL, temporaryInterpolantDerivative,
-                temporaryInterpolantDerivativeGSL);
-    }
-    printf("Results can be seen in quadraticSplinePlot.png\n\n");
-
-    //PART C
-    printf("C: Cubic spline interpolation \n\n");
-
+    //Doing cubic spline again to have something to compare to
     cubicSpline *cubicSpline = initialize_cubic_spline(numberOfPoints, xData, yData);
 
     for (double i = xData[0]; i < xData[numberOfPoints]; i += resolution)
     {
-
         double temporaryInterpolant = evaluate_cubic_spline(cubicSpline, i);
-        double temporaryInterpolantGSL = gsl_interp_eval(cubicInterpolationGSL, xData, yData, i, NULL);
         double temporaryInterpolantIntegral = evaluate_cubic_spline_integral(cubicSpline, i);
-        double temporaryInterpolantIntegralGSL = gsl_interp_eval_integ(cubicInterpolationGSL, xData, yData, xData[0], i,
-                                                                       NULL);
         double temporaryInterpolantDerivative = evaluate_cubic_spline_derivative(cubicSpline, i);
-        double temporaryInterpolantDerivativeGSL = gsl_interp_eval_deriv(cubicInterpolationGSL, xData, yData, i, NULL);
 
-        fprintf(cubicOutput, "%g\t%g\t%g\t%g\t%g\t%g\t%g\n", i, temporaryInterpolant, temporaryInterpolantGSL,
-                temporaryInterpolantIntegral, temporaryInterpolantIntegralGSL, temporaryInterpolantDerivative,
-                temporaryInterpolantDerivativeGSL);
+        fprintf(cubicOutput, "%g\t%g\t%g\t%g\n", i, temporaryInterpolant,
+                temporaryInterpolantIntegral, temporaryInterpolantDerivative
+        );
     }
-    printf("Results can be seen in cubicSplinePlot.png\n\n");
 
-    /*
+
     //EXAM PART
 
-    double *xDataExam = malloc(numberOfPoints * sizeof(double));
-    double *yDataExam = malloc(numberOfPoints * sizeof(double));
-    double *pDataExam = malloc(numberOfPoints * sizeof(double));
-
-    inputToArray3D(xDataExam,yDataExam,pDataExam,dataFile);
+    //Print loop to show xData, yData, and pData content
+    /*
+    for (int i = 0; i < numberOfPoints; i++)
+    {
+        printf("%d\t%g\t%g\t%g\n", i, xData[i], yData[i], pData[i]);
+    }
      */
 
 
-    //subSpline *subSpline = initialize_sub_spline(numberOfPoints, xData, yData);
+    subSpline *subSplineCos = initialize_sub_spline(numberOfPoints, xData, yData, pData);
+
+    for (double i = xData[0]; i < xData[numberOfPoints]; i += resolution)
+    {
+        double temporaryInterpolantSubSpline = evaluate_sub_spline(subSplineCos, i);
+        fprintf(subOutput, "%g\t%g\n", i, temporaryInterpolantSubSpline);
+    }
+
+    //Test on some new homemade data with sudden jump
+    int numberOfPointsJump = 8;
+    double xDataJump[8] = {0.0, 0.5, 1.0, 1.55, 1.95, 2.5, 3.0, 3.5};
+    double yDataJump[8] = {0.23, 0.35, 0.25, 0.33, 1.37, 1.44, 1.25, 1.51};
+    double *pDataJump = malloc(numberOfPointsJump * sizeof(double));
+
+    int counter = 0;
+    for (int i = 0; i < numberOfPointsJump; i++)
+    {
+        counter++;
+        if (counter == numberOfPointsJump)
+        {
+            fprintf(jumpData,"%g\t%g", xDataJump[i],yDataJump[i]);
+        }
+        else
+        {
+            fprintf(jumpData,"%g\t%g\n", xDataJump[i],yDataJump[i]);
+        }
+    }
+
+    estimate_derivative(numberOfPointsJump,xDataJump,yDataJump,pDataJump);
+
+    subSpline *subSplineJump = initialize_sub_spline(numberOfPointsJump,xDataJump,yDataJump,pDataJump);
+
+    double resolutionJump = fabs(xDataJump[numberOfPointsJump - 1] - xDataJump[0]) / numberOfSamples;
+
+    printf("%g\n", xDataJump[0]);
+    printf("%g\n", xDataJump[numberOfPointsJump-1]);
+    for (double i = xDataJump[0]; i < xDataJump[numberOfPointsJump-1]; i += resolutionJump)
+    {
+        double temporaryInterpolantSubSpline = evaluate_sub_spline(subSplineJump, i);
+        fprintf(jumpOutput, "%g\t%g\n", i, temporaryInterpolantSubSpline);
+    }
+
 
     //Free memory
-    fclose(linearOutput);
-    fclose(quadraticOutput);
+    fclose(cubicOutput);
+    fclose(subOutput);
 
-    free_quadratic_spline(quadraticSpline);
     free_cubic_spline(cubicSpline);
-    gsl_interp_free(linearInterpolationGSL);
-    gsl_interp_free(quadraticInterpolationGSL);
+    free_sub_spline(subSplineCos);
 
     return 0;
 }

@@ -19,6 +19,8 @@ subSpline *initialize_sub_spline(int numberOfPoints, double *xData, double *yDat
 
 double evaluate_sub_spline(subSpline *spline, double evaluationPoint);
 
+void estimate_derivative(int numberOfPoints, double *xData, double *yData, double *pData);
+
 void free_sub_spline(subSpline *spline);
 
 #endif //UNI_SUBSPLINE_H
