@@ -18,7 +18,13 @@ Long Double eps = 1.0842e-19
 max = 1073741823 
 sum_up_float=15.403683
  sum_down_float= 18.807919 
+
+The difference is due to noncommutativeness of floating points arithmetic. At some point a rounding error will occur 
+
+ I do not think it converges as function of max, as we will get a rounding error
 sum_up_double=21.371631
  sum_down_double= 21.371631 
+
+The same thing do not happen for doubles, since they have more precision 
 Function for part 3 is found in equals.c
 

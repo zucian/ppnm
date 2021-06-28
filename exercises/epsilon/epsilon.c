@@ -87,6 +87,8 @@ int main(){
     printf("max = %i \n",max); 
 	printf("sum_up_float=%f\n ",sum_up_float);
 	printf("sum_down_float= %f \n", sum_down_float);
+	printf("\nThe difference is due to noncommutativeness of floating points arithmetic. At some point a rounding error will occur \n");
+	printf("\n I do not think it converges as function of max, as we will get a rounding error\n");
 
     double sum_up_double = 0;
     double sum_down_double = 0;
@@ -99,6 +101,9 @@ int main(){
 
     printf("sum_up_double=%f\n ",sum_up_double);
     printf("sum_down_double= %f \n", sum_down_double);
+
+    printf("\nThe same thing do not happen for doubles, since they have more precision \n");
+
     printf("Function for part 3 is found in equals.c\n\n");
 
     return 0;
